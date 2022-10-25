@@ -111,6 +111,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                                             if(task.isSuccessful()){
                                                 Toast.makeText(RegisterUser.this, "User has been registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
+                                                startActivity(new Intent(RegisterUser.this, MainActivity.class));
 
                                                 //Redirect to Login Layout
                                             } else{

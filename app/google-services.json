@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "582024300917",
+    "firebase_url": "https://pinventory-5966c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "pinventory-5966c",
+    "storage_bucket": "pinventory-5966c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582024300917:android:205069dda069d33c59ab3c",
+        "android_client_info": {
+          "package_name": "com.example.pinventory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582024300917-4bq4fhj81s7h24d6k8rqcsh8tgg9t5dm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBevfjQrPIO0fRDcSgbQZihS7VP4wOrJmc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582024300917-4bq4fhj81s7h24d6k8rqcsh8tgg9t5dm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
