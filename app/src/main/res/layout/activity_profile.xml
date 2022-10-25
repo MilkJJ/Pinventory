@@ -12,14 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome!"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="260dp"
-        android:layout_marginBottom="644dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="23sp"
         />
 
     <TextView
@@ -38,7 +31,6 @@
         android:id="@+id/emailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/emailAddressTitle"
         app:layout_constraintLeft_toLeftOf="@+id/emailAddressTitle"
         android:layout_marginTop="20dp"

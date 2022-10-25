@@ -3,13 +3,27 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/drawable/ic_add.xml" value="0.139" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1095" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/drawable/ic_no_image_found_background.xml" value="0.1095" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/drawable/ic_unknown_device.xml" value="0.1095" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/drawable/round_drawable.xml" value="0.139" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_add_product.xml" value="0.217753120665742" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_edit_product.xml" value="0.15953307392996108" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_forgot_password.xml" value="0.25" />
-        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_login.xml" value="0.14385964912280702" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_main.xml" value="0.176" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_profile.xml" value="0.2296195652173913" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/activity_register_user.xml" value="0.24635416666666668" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/bottom_sheet_dialog.xml" value="0.24895833333333334" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/content_main.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/fragment_first.xml" value="0.24635416666666668" />
         <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/fragment_second.xml" value="0.24635416666666668" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/layout/product_rv_item.xml" value="0.264" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/menu/menu_main.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1095" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1215" />
+        <entry key="..\:/Users/Admin/Desktop/INTI BCSCUN/Sem2 Courses (BCSCU)/ANDROID DEVELOPMENT SKILLS (CS1)/AndroidStudioProjects/Pinventory/app/src/main/res/mipmap-anydpi-v26/ic_no_image_found.xml" value="0.1215" />
       </map>
     </option>
   </component>
