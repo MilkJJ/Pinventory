@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.pinventory">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".Home"
         android:allowBackup="true"

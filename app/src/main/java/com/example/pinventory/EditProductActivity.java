@@ -70,7 +70,7 @@ public class EditProductActivity extends AppCompatActivity {
         buttonChooseImage = findViewById(R.id.button_choose_image);
 
         productRVModel = getIntent().getParcelableExtra("product");
-        if(productRVModel!=null){
+        if(productRVModel != null){
             productNameEdt.setText(productRVModel.getProductName());
             productDescEdt.setText(productRVModel.getProductDesc());
             productQtyEdt.setText(productRVModel.getProductQty());
