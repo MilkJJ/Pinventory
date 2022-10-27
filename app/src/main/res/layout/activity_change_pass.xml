@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChangePassActivity">
+
+    <ImageButton
+        android:id="@+id/Back_Button"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="17dp"
+        android:backgroundTint="@color/white"
+         />
+
+<!--    android:src="@drawable/ic_backspace"-->
+
+    <TextView
+        android:id="@+id/ChangePassTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="30dp"
+        android:text="Change Password"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/current_pass_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ChangePassTitle"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
+        android:text="Enter your Current Password"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etCurrentPass"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@id/current_pass_display"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="Current Password"
+        android:inputType="textPassword"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <!--        android:background="@drawable/box"-->
+
+    <TextView
+        android:id="@+id/new_password_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etCurrentPass"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:text="Enter New Password Below"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etNewPass"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@id/new_password_display"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="New Password"
+        android:inputType="textPassword"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <!--        android:background="@drawable/box"-->
+
+    <EditText
+        android:id="@+id/etConfirmPass"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@id/etNewPass"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="Confirm New Password"
+        android:inputType="textPassword"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+
+
+    <Button
+        android:id="@+id/btnConfirmChangePass"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etConfirmPass"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
+        android:text="Confirm"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</RelativeLayout>

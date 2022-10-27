@@ -30,7 +30,7 @@
         android:gravity="center"
         android:text="Name"
         android:textColor="@color/black"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <TextView
@@ -43,7 +43,7 @@
         android:gravity="center"
         android:text="Email"
         android:textColor="@color/black"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <Button
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/emailAddress"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="170dp"
         android:layout_marginRight="20dp"
         android:backgroundTint="@color/teal_200"
         android:padding="10dp"
@@ -65,13 +65,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnHomepage"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="@color/teal_200"
         android:padding="10dp"
         android:text="Logout"
         android:textColor="#ffff"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/TVChangePass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/signOut"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="Change password"
+        android:textColor="@color/hyperlink"
+        android:textSize="20sp"
+        android:textStyle="italic" />
 
 </RelativeLayout>

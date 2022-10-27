@@ -31,6 +31,7 @@ public class ProfileActivity extends AppCompatActivity {
     private String userID;
 
     private Button logout, btnHomepage;
+    private TextView TVChangePass;
 
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -42,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         logout = (Button) findViewById(R.id.signOut);
         btnHomepage = (Button) findViewById(R.id.btnHomepage);
+        TVChangePass = findViewById(R.id.TVChangePass);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -50,6 +52,13 @@ public class ProfileActivity extends AppCompatActivity {
         gsc = GoogleSignIn.getClient(this, gso);
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+        TVChangePass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this, ChangePassActivity.class));
+            }
+        });
 
         btnHomepage.setOnClickListener(new View.OnClickListener() {
             @Override
