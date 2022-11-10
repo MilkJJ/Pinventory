@@ -89,7 +89,7 @@ public class AddProductActivity extends AppCompatActivity {
                 productID = productName;
                 ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, productImg, productID);
 
-                mDatabaseRef.addValueEventListener(new ValueEventListener() {
+                mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         progressBar.setVisibility(View.GONE);

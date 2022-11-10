@@ -86,6 +86,7 @@ public class EditProductActivity extends AppCompatActivity {
             }
         });
 
+
         databaseReference = firebaseDatabase.getReference("Products").child(productID);
         updateProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +94,8 @@ public class EditProductActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 if(mUploadTask != null && mUploadTask.isInProgress()){
                     Toast.makeText(EditProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
+                } else if (mUploadTask == null){
+                    Toast.makeText(EditProductActivity.this, "Please select an Image!", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
                 }
@@ -103,14 +106,15 @@ public class EditProductActivity extends AppCompatActivity {
                 String productImg = mImageUri.toString(); //productImgEdt.getText().toString().trim();
                 //Date and Bar/QR
 
-                Map<String,Object> map = new HashMap<>();
-                map.put("productName", productName);
-                map.put("productDesc", productDesc);
-                map.put("productQty", productQty);
-                map.put("productImg", productImg);
-                map.put("productID", productID);
+                Map<String, Object> map = new HashMap<>();
 
-                databaseReference.addValueEventListener(new ValueEventListener() {
+                    map.put("productName", productName);
+                    map.put("productDesc", productDesc);
+                    map.put("productQty", productQty);
+                    map.put("productImg", productImg);
+                    map.put("productID", productID);
+
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         progressBar.setVisibility(View.GONE);
