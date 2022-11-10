@@ -37,12 +37,13 @@ public class AddProductActivity extends AppCompatActivity {
     private TextInputEditText productNameEdt, productDescEdt, productQtyEdt; //Expiry Date
     private Button addProductBtn, buttonChooseImage;
     private ProgressBar progressBar;
-    private Uri mImageUri;
     private FirebaseDatabase firebaseDatabase;
     private String productID;
 
+    private Uri mImageUri;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
+
     private StorageTask mUploadTask;
 
     @Override
@@ -82,27 +83,6 @@ public class AddProductActivity extends AppCompatActivity {
                 } else {
                     uploadFile();
                 }
-                String productName = productNameEdt.getText().toString().trim();
-                String productDesc = productDescEdt.getText().toString().trim();
-                String productQty = productQtyEdt.getText().toString().trim();
-                String productImg = mImageUri.toString(); //productImgEdt.getText().toString().trim();
-                productID = productName;
-                ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, productImg, productID);
-
-                mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        progressBar.setVisibility(View.GONE);
-                        mDatabaseRef.child(productID).setValue(productRVModel);
-                        Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(AddProductActivity.this, MainActivity.class));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(AddProductActivity.this, "Error:"+ error.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
     }
@@ -133,17 +113,43 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void uploadFile(){
         if(mImageUri != null){
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+            StorageReference fileReference = mStorageRef.child(productID
             + "." + getFileExtension(mImageUri));
 
             mUploadTask = fileReference.putFile(mImageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(AddProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
-//                            Upload upload = new Upload("image_1", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-//                            String uploadId = mDatabaseRef.push().getKey();
-//                            mDatabaseRef.child(uploadId).setValue(upload);
+//
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Uri downloadUrl = uri;
+                                    Toast.makeText(AddProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
+
+                                    String productName = productNameEdt.getText().toString().trim();
+                                    String productDesc = productDescEdt.getText().toString().trim();
+                                    String productQty = productQtyEdt.getText().toString().trim();
+                                    String productImg = downloadUrl.toString(); //productImgEdt.getText().toString().trim();
+                                    productID = productName;
+                                    ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, productImg, productID);
+
+                                    mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            progressBar.setVisibility(View.GONE);
+                                            mDatabaseRef.child(productID).setValue(productRVModel);
+                                            Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(AddProductActivity.this, MainActivity.class));
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(AddProductActivity.this, "Error:"+ error.toString(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -162,5 +168,6 @@ public class AddProductActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
-    }
+    };
+
 }
