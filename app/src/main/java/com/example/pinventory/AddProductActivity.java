@@ -1,5 +1,6 @@
 package com.example.pinventory;
 
+import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -35,7 +36,9 @@ public class AddProductActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private ImageView idProductImage;
-    private TextInputEditText productNameEdt, productDescEdt, productQtyEdt; //Expiry Date
+    private TextInputEditText productNameEdt, productDescEdt, productQtyEdt, etDate; //Expiry Date
+    DatePickerDialog.OnDateSetListener mSetListener;
+
     private Button addProductBtn, buttonChooseImage;
     private ProgressBar progressBar;
     private FirebaseDatabase firebaseDatabase;
@@ -44,6 +47,7 @@ public class AddProductActivity extends AppCompatActivity {
     private Uri mImageUri;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
+    private DatabaseReference HistoryDBRef;
 
     private StorageTask mUploadTask;
 
@@ -55,6 +59,12 @@ public class AddProductActivity extends AppCompatActivity {
         productNameEdt = findViewById(R.id.idEdtProductName);
         productDescEdt = findViewById(R.id.idEdtProductDesc);
         productQtyEdt = findViewById(R.id.idEdtProductQty);
+        etDate = findViewById(R.id.et_date);
+
+//        Calender calender = Calender.getInstance();
+//        final int year = calender.get(Calender.YEAR);
+//        final int month = calender.get(Calender.MONTH);
+//        final int day = calender.get(Calender.DAY_OF_MONTH);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
@@ -67,6 +77,7 @@ public class AddProductActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseRef = firebaseDatabase.getReference("Products");
+        HistoryDBRef = firebaseDatabase.getReference("History");
 
         buttonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +94,24 @@ public class AddProductActivity extends AppCompatActivity {
                     Toast.makeText(AddProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
+                    saveToHistory();
                 }
+            }
+        });
+    }
+
+    private void saveToHistory() {
+        HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child("user_hist")
+                        .setValue(productNameEdt.getText().toString().trim() + " has been added");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(AddProductActivity.this, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

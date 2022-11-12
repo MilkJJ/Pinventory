@@ -25,6 +25,11 @@ public class ProductRVAdapter extends RecyclerView.Adapter<ProductRVAdapter.View
         this.productClickInterface = productClickInterface;
     }
 
+    public void setFilteredList(ArrayList<ProductRVModel> filteredList){
+        this.productRVModelArrayList = filteredList;
+        notifyDataSetChanged();
+    }
+
     private ArrayList<ProductRVModel> productRVModelArrayList;
     private Context context;
     int lastPos = -1;

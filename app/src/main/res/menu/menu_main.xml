@@ -4,12 +4,17 @@
     tools:context="com.example.pinventory.MainActivity">
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/mmQRCode"
         android:title="@string/action_scanner"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/idProfile"
+        android:id="@+id/mmHistory"
+        android:title="Action History"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/mmProfile"
         android:orderInCategory="100"
         android:title="Profile" />
 </menu>

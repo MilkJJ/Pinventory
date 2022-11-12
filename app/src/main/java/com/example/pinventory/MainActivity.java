@@ -11,10 +11,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,14 +40,32 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
     private FloatingActionButton addFAB;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+
     private ArrayList<ProductRVModel> productRVModelArrayList;
     private RelativeLayout bottomSheetRL;
     private ProductRVAdapter productRVAdapter;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mSearchView = findViewById(R.id.searchViewProduct);
+        mSearchView.clearFocus();
+
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterList(newText);
+                return true;
+            }
+        });
 
         productRV = findViewById(R.id.idRVProducts);
         progressBar = findViewById(R.id.progressBar);
@@ -69,7 +89,22 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         getAllProducts();
     }
 
-    private void getAllProducts(){
+    private void filterList(String text) {
+        ArrayList<ProductRVModel> filteredList = new ArrayList<>();
+        for (ProductRVModel item : productRVModelArrayList) {
+            if (item.getProductName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        if (filteredList.isEmpty()) {
+            Toast.makeText(this, "No data found!", Toast.LENGTH_SHORT).show();
+        } else {
+            productRVAdapter.setFilteredList(filteredList);
+        }
+    }
+
+    private void getAllProducts() {
         productRVModelArrayList.clear();
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -109,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         displayBottomSheet(productRVModelArrayList.get(position));
     }
 
-    private void displayBottomSheet(ProductRVModel productRVModel){
+    private void displayBottomSheet(ProductRVModel productRVModel) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
         View layout = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_dialog, bottomSheetRL);
         bottomSheetDialog.setContentView(layout);
@@ -127,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
 
         productNameTV.setText(productRVModel.getProductName());
         productDescTV.setText(productRVModel.getProductDesc());
-        productQtyTV.setText("Stock: "+productRVModel.getProductQty());
+        productQtyTV.setText("Stock: " + productRVModel.getProductQty());
         Picasso.with(this).load(productRVModel.getProductImg())
                 .placeholder(R.drawable.ic_no_photo).fit().centerInside()
                 .into(productIV);
@@ -144,19 +179,32 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        switch(id){
-            case R.id.idProfile:
-                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+        switch (id) {
+            case R.id.mmQRCode:
+                Intent i = new Intent(MainActivity.this, ChangePassActivity.class);
                 startActivity(i);
                 this.finish();
                 return true;
+
+            case R.id.mmHistory:
+                Intent j = new Intent(MainActivity.this, HistoryActivity.class);
+                startActivity(j);
+                this.finish();
+                return true;
+
+            case R.id.mmProfile:
+                Intent k = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(k);
+                this.finish();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
