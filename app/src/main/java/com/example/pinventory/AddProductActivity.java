@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -78,7 +79,7 @@ public class AddProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                if(mUploadTask != null && mUploadTask.isInProgress()){
+                if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(AddProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
@@ -86,7 +87,8 @@ public class AddProductActivity extends AppCompatActivity {
             }
         });
     }
-    private void openFileChooser(){
+
+    private void openFileChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -97,24 +99,24 @@ public class AddProductActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-        && data != null && data.getData() != null) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
             mImageUri = data.getData();
 
             Picasso.with(this).load(mImageUri).into(idProductImage);
         }
     }
 
-    private String getFileExtension(Uri uri){
+    private String getFileExtension(Uri uri) {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void uploadFile(){
-        if(mImageUri != null){
+    private void uploadFile() {
+        if (mImageUri != null) {
             StorageReference fileReference = mStorageRef.child(productID
-            + "." + getFileExtension(mImageUri));
+                    + "." + getFileExtension(mImageUri));
 
             mUploadTask = fileReference.putFile(mImageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -138,14 +140,17 @@ public class AddProductActivity extends AppCompatActivity {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             progressBar.setVisibility(View.GONE);
-                                            mDatabaseRef.child(productID).setValue(productRVModel);
+                                            mDatabaseRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(productID)
+                                                    .setValue(productRVModel);
+
                                             Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
                                             startActivity(new Intent(AddProductActivity.this, MainActivity.class));
                                         }
 
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(AddProductActivity.this, "Error:"+ error.toString(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AddProductActivity.this, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -166,8 +171,11 @@ public class AddProductActivity extends AppCompatActivity {
                         }
                     });
         } else {
+            progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
-    };
+    }
+
+    ;
 
 }

@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +56,7 @@ public class EditProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_product);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
+
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
         productImage = findViewById(R.id.idProductImage);
@@ -86,48 +88,19 @@ public class EditProductActivity extends AppCompatActivity {
             }
         });
 
+        databaseReference = firebaseDatabase.getReference("Products")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(productID);
 
-        databaseReference = firebaseDatabase.getReference("Products").child(productID);
         updateProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
                 if(mUploadTask != null && mUploadTask.isInProgress()){
                     Toast.makeText(EditProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
-                } else if (mUploadTask == null){
-                    Toast.makeText(EditProductActivity.this, "Please select an Image!", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
                 }
-
-                String productName = productNameEdt.getText().toString().trim();
-                String productDesc = productDescEdt.getText().toString().trim();
-                String productQty = productQtyEdt.getText().toString().trim();
-                String productImg = mImageUri.toString(); //productImgEdt.getText().toString().trim();
-                //Date and Bar/QR
-
-                Map<String, Object> map = new HashMap<>();
-
-                    map.put("productName", productName);
-                    map.put("productDesc", productDesc);
-                    map.put("productQty", productQty);
-                    map.put("productImg", productImg);
-                    map.put("productID", productID);
-
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        progressBar.setVisibility(View.GONE);
-                        databaseReference.updateChildren(map);
-                        Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(EditProductActivity.this, MainActivity.class));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
         });
 
@@ -179,10 +152,43 @@ public class EditProductActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
-//                            Upload upload = new Upload("image_1", taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
-//                            String uploadId = mDatabaseRef.push().getKey();
-//                            mDatabaseRef.child(uploadId).setValue(upload);
+
+                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Uri downloadUrl = uri;
+                                    String productName = productNameEdt.getText().toString().trim();
+                                    String productDesc = productDescEdt.getText().toString().trim();
+                                    String productQty = productQtyEdt.getText().toString().trim();
+                                    String productImg = downloadUrl.toString();
+                                    //Date and Bar/QR
+
+                                    Map<String, Object> map = new HashMap<>();
+
+                                    map.put("productName", productName);
+                                    map.put("productDesc", productDesc);
+                                    map.put("productQty", productQty);
+                                    map.put("productImg", productImg);
+                                    map.put("productID", productID);
+
+                                    Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
+
+                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            progressBar.setVisibility(View.GONE);
+                                            databaseReference.updateChildren(map);
+                                            Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(EditProductActivity.this, MainActivity.class));
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            });
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -198,7 +204,37 @@ public class EditProductActivity extends AppCompatActivity {
                             progressBar.setProgress((int) progress);
                         }
                     });
-        } else {
+        } else if (!productRVModel.getProductImg().isEmpty()) {
+            String productName = productNameEdt.getText().toString().trim();
+            String productDesc = productDescEdt.getText().toString().trim();
+            String productQty = productQtyEdt.getText().toString().trim();
+            //Date and Bar/QR
+
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("productName", productName);
+            map.put("productDesc", productDesc);
+            map.put("productQty", productQty);
+            map.put("productID", productID);
+
+            Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    progressBar.setVisibility(View.GONE);
+                    databaseReference.updateChildren(map);
+                    Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(EditProductActivity.this, MainActivity.class));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else {
+            progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
     }
