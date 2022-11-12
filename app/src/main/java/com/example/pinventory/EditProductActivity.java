@@ -1,5 +1,6 @@
 package com.example.pinventory;
 
+import android.app.DatePickerDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -37,12 +39,15 @@ import java.util.Map;
 public class EditProductActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-    private TextInputEditText productNameEdt, productDescEdt, productQtyEdt; //Expiry Date
+    private TextInputEditText productNameEdt, productDescEdt, productQtyEdt, expiryDateEdt; //Expiry Date
     private ImageView productImage;
     private Button updateProductBtn, deleteProductBtn, buttonChooseImage;
     private ProgressBar progressBar;
     private FirebaseDatabase firebaseDatabase;
+
     private DatabaseReference databaseReference;
+    private DatabaseReference HistoryDBRef;
+
     private String productID;
     private ProductRVModel productRVModel;
     private Uri mImageUri;
@@ -60,10 +65,31 @@ public class EditProductActivity extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
         productImage = findViewById(R.id.idProductImage);
-
         productNameEdt = findViewById(R.id.idEdtProductName);
         productDescEdt = findViewById(R.id.idEdtProductDesc);
         productQtyEdt = findViewById(R.id.idEdtProductQty);
+        expiryDateEdt = findViewById(R.id.et_date);
+
+        //final Calender calender = Calender.getInstance();
+        final int year = 2002; //calender.get(Calender.YEAR);
+        final int month = 6; // calender.get(Calender.MONTH);
+        final int day = 20; //calender.get(Calender.DAY_OF_MONTH);
+
+        expiryDateEdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        EditProductActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        month = month+1;
+                        String date = day+"/"+month+"/"+year;
+                        expiryDateEdt.setText(date);
+                    }
+                },year,month,day);
+                datePickerDialog.show();
+            }
+        });
 
         updateProductBtn = findViewById(R.id.idBtnUpdateProduct);
         deleteProductBtn = findViewById(R.id.idBtnDeleteProduct);
@@ -77,9 +103,15 @@ public class EditProductActivity extends AppCompatActivity {
             productDescEdt.setText(productRVModel.getProductDesc());
             productQtyEdt.setText(productRVModel.getProductQty());
             Picasso.with(this).load(productRVModel.getProductImg()).into(productImage);
-            //QR CODE & Expiry Date
+            expiryDateEdt.setText(productRVModel.getExpiryDate());
             productID = productRVModel.getProductID();
         }
+
+        databaseReference = firebaseDatabase.getReference("Products")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(productID);
+
+        HistoryDBRef = firebaseDatabase.getReference("History");
 
         buttonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,10 +119,6 @@ public class EditProductActivity extends AppCompatActivity {
                 openFileChooser();
             }
         });
-
-        databaseReference = firebaseDatabase.getReference("Products")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(productID);
 
         updateProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +128,7 @@ public class EditProductActivity extends AppCompatActivity {
                     Toast.makeText(EditProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
                 } else {
                     uploadFile();
+                    saveToHistory();
                 }
             }
         });
@@ -108,12 +137,45 @@ public class EditProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteProduct();
+
+                HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(System.currentTimeMillis()+ "")
+                                .setValue(productNameEdt.getText().toString().trim() + " has been deleted!");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(EditProductActivity.this, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+    }
+
+
+    private void saveToHistory() {
+        HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(System.currentTimeMillis()+ "")
+                        .setValue(productNameEdt.getText().toString().trim() + " info has been modified!");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(EditProductActivity.this, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void deleteProduct(){
         databaseReference.removeValue();
+
         Toast.makeText(this, "Product Removed!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(EditProductActivity.this, MainActivity.class));
     }
@@ -160,6 +222,7 @@ public class EditProductActivity extends AppCompatActivity {
                                     String productName = productNameEdt.getText().toString().trim();
                                     String productDesc = productDescEdt.getText().toString().trim();
                                     String productQty = productQtyEdt.getText().toString().trim();
+                                    String expiryDate = expiryDateEdt.getText().toString().trim();
                                     String productImg = downloadUrl.toString();
                                     //Date and Bar/QR
 
@@ -168,6 +231,7 @@ public class EditProductActivity extends AppCompatActivity {
                                     map.put("productName", productName);
                                     map.put("productDesc", productDesc);
                                     map.put("productQty", productQty);
+                                    map.put("expiryDate", expiryDate);
                                     map.put("productImg", productImg);
                                     map.put("productID", productID);
 
@@ -208,6 +272,8 @@ public class EditProductActivity extends AppCompatActivity {
             String productName = productNameEdt.getText().toString().trim();
             String productDesc = productDescEdt.getText().toString().trim();
             String productQty = productQtyEdt.getText().toString().trim();
+            String expiryDate = expiryDateEdt.getText().toString().trim();
+
             //Date and Bar/QR
 
             Map<String, Object> map = new HashMap<>();
@@ -215,6 +281,7 @@ public class EditProductActivity extends AppCompatActivity {
             map.put("productName", productName);
             map.put("productDesc", productDesc);
             map.put("productQty", productQty);
+            map.put("expiryDate", expiryDate);
             map.put("productID", productID);
 
             Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();

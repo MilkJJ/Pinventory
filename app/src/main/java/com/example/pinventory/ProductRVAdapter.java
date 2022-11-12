@@ -88,6 +88,7 @@ public class ProductRVAdapter extends RecyclerView.Adapter<ProductRVAdapter.View
             super(itemView);
             productNameTV = itemView.findViewById(R.id.idTVProductName);
             productQtyTV = itemView.findViewById(R.id.idTVQuantity);
+            //expiryDateTV = itemView.findViewById(R.id.'');
             productIV = itemView.findViewById(R.id.idIVProduct);
         }
     }

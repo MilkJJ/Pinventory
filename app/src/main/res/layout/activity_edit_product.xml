@@ -88,24 +88,33 @@
                     android:textSize="14sp" />
 
 
+
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Add on Expiry Date-->
-
-            <ImageView
-                android:id="@+id/idProductImage"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Image: "
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:hint="DD/MM/YYYY"
+                android:padding="5dp"
+                android:textColorHint="@color/grey"
+                app:hintTextColor="@color/black">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_date"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
+                    android:textSize="14sp" />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/button_choose_image"
@@ -114,6 +123,21 @@
                 android:text="Choose File"
                 android:backgroundTint="@color/teal_200"
                 android:layout_marginLeft="16dp"/>
+
+            <ImageView
+            android:id="@+id/idProductImage"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Image: "
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="20dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -7,18 +7,20 @@ public class ProductRVModel implements Parcelable {
     private String productName;
     private String productDesc;
     private String productQty;
+    private String expiryDate;
     private String productImg;
     private String productID;
-    //private String product Expiry Date / QR Code
+    //private String productExpiry Date/QR Code
 
-    public ProductRVModel(){
+    public ProductRVModel() {
 
     }
 
-    public ProductRVModel(String productName, String productDesc, String productQty, String productImg, String productID) {
+    public ProductRVModel(String productName, String productDesc, String productQty, String expiryDate, String productImg, String productID) {
         this.productName = productName;
         this.productDesc = productDesc;
         this.productQty = productQty;
+        this.expiryDate = expiryDate;
         this.productImg = productImg;
         this.productID = productID;
     }
@@ -27,6 +29,7 @@ public class ProductRVModel implements Parcelable {
         productName = in.readString();
         productDesc = in.readString();
         productQty = in.readString();
+        expiryDate = in.readString();
         productImg = in.readString();
         productID = in.readString();
     }
@@ -42,6 +45,14 @@ public class ProductRVModel implements Parcelable {
             return new ProductRVModel[size];
         }
     };
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 
     public String getProductName() {
         return productName;
@@ -93,6 +104,7 @@ public class ProductRVModel implements Parcelable {
         dest.writeString(productName);
         dest.writeString(productDesc);
         dest.writeString(productQty);
+        dest.writeString(expiryDate);
         dest.writeString(productImg);
         dest.writeString(productID);
     }

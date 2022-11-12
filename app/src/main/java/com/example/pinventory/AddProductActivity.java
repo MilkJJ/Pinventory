@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -61,10 +62,26 @@ public class AddProductActivity extends AppCompatActivity {
         productQtyEdt = findViewById(R.id.idEdtProductQty);
         etDate = findViewById(R.id.et_date);
 
-//        Calender calender = Calender.getInstance();
-//        final int year = calender.get(Calender.YEAR);
-//        final int month = calender.get(Calender.MONTH);
-//        final int day = calender.get(Calender.DAY_OF_MONTH);
+        //final Calender calender = Calender.getInstance();
+        final int year = 2002; //calender.get(Calender.YEAR);
+        final int month = 1; // calender.get(Calender.MONTH);
+        final int day = 1; //calender.get(Calender.DAY_OF_MONTH);
+
+        etDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        AddProductActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int day) {
+                        month = month+1;
+                        String date = day+"/"+month+"/"+year;
+                        etDate.setText(date);
+                    }
+                },year,month,day);
+                datePickerDialog.show();
+            }
+        });
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
 
@@ -105,7 +122,7 @@ public class AddProductActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child("user_hist")
+                        .child(System.currentTimeMillis()+ "")
                         .setValue(productNameEdt.getText().toString().trim() + " has been added");
             }
 
@@ -160,9 +177,10 @@ public class AddProductActivity extends AppCompatActivity {
                                     String productName = productNameEdt.getText().toString().trim();
                                     String productDesc = productDescEdt.getText().toString().trim();
                                     String productQty = productQtyEdt.getText().toString().trim();
+                                    String expiryDate = etDate.getText().toString().trim();
                                     String productImg = downloadUrl.toString(); //productImgEdt.getText().toString().trim();
                                     productID = productName;
-                                    ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, productImg, productID);
+                                    ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, expiryDate, productImg, productID);
 
                                     mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
