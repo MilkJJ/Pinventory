@@ -46,11 +46,14 @@ public class ProductRVAdapter extends RecyclerView.Adapter<ProductRVAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         ProductRVModel productRVModel = productRVModelArrayList.get(position);
-        holder.productNameTV.setText(productRVModel.getProductName());
-        holder.productQtyTV.setText("Stock: "+productRVModel.getProductQty());
+
         Picasso.with(this.context).load(productRVModel.getProductImg())
                 .placeholder(R.drawable.ic_no_photo).fit().centerInside()
                 .into(holder.productIV);
+
+        holder.productNameTV.setText(productRVModel.getProductName());
+        holder.productQtyTV.setText("Stock: "+productRVModel.getProductQty());
+        holder.expiryDateTV.setText("Expiry: "+productRVModel.getExpiryDate());
 
         setAnimation(holder.itemView, position);
 
@@ -81,14 +84,14 @@ public class ProductRVAdapter extends RecyclerView.Adapter<ProductRVAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView productNameTV, productQtyTV;
+        private TextView productNameTV, productQtyTV, expiryDateTV;
         private ImageView productIV;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             productNameTV = itemView.findViewById(R.id.idTVProductName);
             productQtyTV = itemView.findViewById(R.id.idTVQuantity);
-            //expiryDateTV = itemView.findViewById(R.id.'');
+            expiryDateTV = itemView.findViewById(R.id.idTVExpiryDate);
             productIV = itemView.findViewById(R.id.idIVProduct);
         }
     }

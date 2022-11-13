@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         TextView productNameTV = layout.findViewById(R.id.idTVProductName);
         TextView productDescTV = layout.findViewById(R.id.idTVDescription);
         TextView productQtyTV = layout.findViewById(R.id.idTVQuantity);
+        TextView ExpiryDateTV = layout.findViewById(R.id.idTVExpiryDate);
         ImageView productIV = layout.findViewById(R.id.idIVProduct);
 
         Button editBtn = layout.findViewById(R.id.idBtnEdit);
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         productNameTV.setText(productRVModel.getProductName());
         productDescTV.setText(productRVModel.getProductDesc());
         productQtyTV.setText("Stock: " + productRVModel.getProductQty());
+        ExpiryDateTV.setText("Expiry: "+ productRVModel.getExpiryDate());
         Picasso.with(this).load(productRVModel.getProductImg())
                 .placeholder(R.drawable.ic_no_photo).fit().centerInside()
                 .into(productIV);

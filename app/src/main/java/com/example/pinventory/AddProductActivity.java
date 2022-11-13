@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -32,6 +33,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import java.util.Date;
 
 public class AddProductActivity extends AppCompatActivity {
 
@@ -118,12 +121,18 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     private void saveToHistory() {
+        Date d = new Date();
+        CharSequence s  = DateFormat.format("d/MM/yyyy ", d.getTime());
+
         HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String actionHistory = "'" + productNameEdt.getText().toString().trim() + "' has been added on " + s.toString();
+                HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
+
                 HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(System.currentTimeMillis()+ "")
-                        .setValue(productNameEdt.getText().toString().trim() + " has been added");
+                        .setValue(historyRVModel);
             }
 
             @Override

@@ -39,14 +39,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/idIVProduct"
-            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="3dp"
+            android:layout_marginRight="10dp"
             android:layout_marginBottom="3dp"
             android:padding="4dp"
             android:singleLine="true"
             android:text="Stock Quantity"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/idTVExpiryDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/idIVProduct"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_alignParentEnd="true"
+            android:padding="4dp"
+            android:singleLine="true"
+            android:text="Expiry Date"
             android:textColor="@color/black"
             android:textSize="18sp" />
 
