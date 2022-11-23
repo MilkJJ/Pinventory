@@ -107,6 +107,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         startActivity(new Intent(HistoryActivity.this, MainActivity.class));
         finish();
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

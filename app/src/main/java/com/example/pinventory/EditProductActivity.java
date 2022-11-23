@@ -76,9 +76,9 @@ public class EditProductActivity extends AppCompatActivity {
         expiryDateEdt = findViewById(R.id.et_date);
 
         //final Calender calender = Calender.getInstance();
-        final int year = 2002; //calender.get(Calender.YEAR);
-        final int month = 6; // calender.get(Calender.MONTH);
-        final int day = 20; //calender.get(Calender.DAY_OF_MONTH);
+        final int year = 2023; //calender.get(Calender.YEAR);
+        final int month = 1; // calender.get(Calender.MONTH);
+        final int day = 1; //calender.get(Calender.DAY_OF_MONTH);
 
         expiryDateEdt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +124,7 @@ public class EditProductActivity extends AppCompatActivity {
                 Log.d("test2323",qrText);
 
             }
+            //new changes
             testingRef =firebaseDatabase.getInstance().getReference("Products")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(qrText);

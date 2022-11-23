@@ -1,5 +1,7 @@
 package com.example.pinventory;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +15,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,11 +26,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -107,9 +114,9 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         productRVModelArrayList = new ArrayList<>();
         bottomSheetRL = findViewById(R.id.idRLBSheet);
 
-      //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
+        //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
         productRV.setLayoutManager(new LinearLayoutManager(this));
-      //  productRV.setAdapter(productRVAdapter);
+        //  productRV.setAdapter(productRVAdapter);
         addFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,11 +234,40 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         return true;
     }
 
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume up to flash on");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
+    {
+        if(result.getContents()!=null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Result");
+            builder.setMessage(result.getContents());
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            }).show();
+            Intent i = new Intent(MainActivity.this, EditProductActivity.class);
+            i.putExtra("productQR", result.getContents());
+
+            startActivity(i);
+
+        }
+
+    });
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.mmQRCode:
+                scanCode();
                 return true;
 
             case R.id.mmHistory:
