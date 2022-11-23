@@ -17,4 +17,9 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"/>
 
+    <TextView
+        android:id="@+id/ProductQRName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"></TextView>
 </LinearLayout>
