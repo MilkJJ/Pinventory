@@ -68,10 +68,13 @@ public class AddProductActivity extends AppCompatActivity {
         productQtyEdt = findViewById(R.id.idEdtProductQty);
         etDate = findViewById(R.id.et_date);
 
+        Date d = new Date();
+        CharSequence s  = DateFormat.format("d/MM/yyyy ", d.getTime());
+
         //final Calender calender = Calender.getInstance();
-        final int year = 2002; //calender.get(Calender.YEAR);
-        final int month = 1; // calender.get(Calender.MONTH);
-        final int day = 1; //calender.get(Calender.DAY_OF_MONTH);
+        final int year = 2022; //calender.get(Calender.YEAR);
+        final int month = 11; // calender.get(Calender.MONTH);
+        final int day = 24; //calender.get(Calender.DAY_OF_MONTH);
 
         etDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +88,7 @@ public class AddProductActivity extends AppCompatActivity {
                         etDate.setText(date);
                     }
                 },year,month,day);
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 datePickerDialog.show();
             }
         });
