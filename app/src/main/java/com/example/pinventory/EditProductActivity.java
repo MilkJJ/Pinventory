@@ -1,7 +1,10 @@
 package com.example.pinventory;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -120,52 +123,90 @@ public class EditProductActivity extends AppCompatActivity {
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
                     .child(productID);
         }
-        else{
-
+        else {
             if (extras != null) {
                 qrText = extras.getString("productQR");
-                Log.d("test2323",qrText);
+                Log.d("test2323", qrText);
 
             }
-           String qr1 = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String qr1 = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String qr2 = qrText;
-            String tempID = qr2.substring(qr1.length(),qr2.length());
-            System.out.println(tempID);
-            //new changes
-            testingRef =firebaseDatabase.getInstance().getReference("Products")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(qrText);
+            System.out.println("OOOOO" + productNameEdt.getText());
+            if (qrText.length() < qr1.length()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
+                builder.setTitle("No record ");
+                builder.setMessage(qrText + "not found.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-            databaseReference =firebaseDatabase.getInstance().getReference("Products")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(qrText)
-                    .child(tempID);
+                        Intent back = new Intent(EditProductActivity.this, MainActivity.class);
+                        startActivity(back);
+                        dialogInterface.dismiss();
+                    }
+                }).show();
 
-            testingRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    System.out.println("KKKKK2");
-                    for(DataSnapshot ds: snapshot.getChildren() ){
-                        for(DataSnapshot productid : ds.getChildren()) {
-                            System.out.println(ds+"\n KKKKK4"+productid);
-                           productRVModel = ds.getValue(ProductRVModel.class);
-                            System.out.println(productRVModel.getProductName());
-                            productNameEdt.setText(productRVModel.getProductName());
-                            productDescEdt.setText(productRVModel.getProductDesc());
-                            productQtyEdt.setText(productRVModel.getProductQty());
-                            Picasso.with(EditProductActivity.this).load(productRVModel.getProductImg()).into(productImage);
-                            expiryDateEdt.setText(productRVModel.getExpiryDate());
-                            productID = productRVModel.getProductID();
+
+            } else {
+                String tempID = qr2.substring(qr1.length(), qr2.length());
+                System.out.println(tempID);
+                //new changes
+                testingRef = firebaseDatabase.getInstance().getReference("Products")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(qrText);
+
+                databaseReference = firebaseDatabase.getInstance().getReference("Products")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(qrText)
+                        .child(tempID);
+
+                String finalQrText = qrText.trim();
+                testingRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        System.out.println("KKKKK2");
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            for (DataSnapshot productid : ds.getChildren()) {
+                                System.out.println(ds + "\n KKKKK4" + productid);
+                                productRVModel = ds.getValue(ProductRVModel.class);
+                                System.out.println(productRVModel.getProductName());
+                                productNameEdt.setText(productRVModel.getProductName());
+                                productDescEdt.setText(productRVModel.getProductDesc());
+                                productQtyEdt.setText(productRVModel.getProductQty());
+                                Picasso.with(EditProductActivity.this).load(productRVModel.getProductImg()).into(productImage);
+                                expiryDateEdt.setText(productRVModel.getExpiryDate());
+                                productID = productRVModel.getProductID();
+
+                            }
+
                         }
 
+                        if (productNameEdt.getText().length() < 1 ) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
+                            builder.setTitle("No record ");
+                            builder.setMessage(finalQrText + "\nnot found.");
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    Intent back = new Intent(EditProductActivity.this, MainActivity.class);
+                                    startActivity(back);
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+
+
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
+                    }
+                });
+
+            }
+
         }
 
 
