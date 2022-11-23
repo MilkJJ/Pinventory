@@ -25,9 +25,11 @@
         </activity>
         <activity
             android:name=".HistoryActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".ChangePassActivity"
+            android:parentActivityName=".ProfileActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
@@ -40,15 +42,19 @@
         </activity>
         <activity
             android:name=".EditProductActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".AddProductActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".ForgotPassword"
+            android:parentActivityName=".LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".RegisterUser"

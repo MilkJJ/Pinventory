@@ -61,6 +61,8 @@ public class AddProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         productNameEdt = findViewById(R.id.idEdtProductName);
         productDescEdt = findViewById(R.id.idEdtProductDesc);
         productQtyEdt = findViewById(R.id.idEdtProductQty);

@@ -33,6 +33,8 @@ public class ChangePassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_pass);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         currentPass = (EditText) findViewById(R.id.etCurrentPass);
         newPass = (EditText) findViewById(R.id.etNewPass);
         confirmPass = (EditText) findViewById(R.id.etConfirmPass);

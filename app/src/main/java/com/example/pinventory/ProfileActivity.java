@@ -1,6 +1,7 @@
 package com.example.pinventory;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,25 +29,17 @@ public class ProfileActivity extends AppCompatActivity {
     private Button logout, btnHomepage;
     private TextView TVChangePass;
 
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
         logout = (Button) findViewById(R.id.signOut);
         btnHomepage = (Button) findViewById(R.id.btnHomepage);
         TVChangePass = findViewById(R.id.TVChangePass);
-
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        gsc = GoogleSignIn.getClient(this, gso);
-
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         TVChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,18 +54,13 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             }
         });
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(account != null) {
-                    SignOut();
-                } else {
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
-                }
+                onBackPressed();
             }
         });
-
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -100,20 +82,6 @@ public class ProfileActivity extends AppCompatActivity {
                     greetingTextView.setText("Welcome, " + userName + "!");
                     userNameTextView.setText(userName);
                     emailTextView.setText(email);
-                } else {
-                    if(account != null){
-                        String userName = account.getDisplayName();
-                        String email = account.getEmail();
-
-                        final TextView greetingTextView = (TextView) findViewById(R.id.greeting);
-                        final TextView userNameTextView = (TextView) findViewById(R.id.userName);
-                        final TextView emailTextView = (TextView) findViewById(R.id.emailAddress);
-
-                        greetingTextView.setText("Welcome, " + userName + "!");
-                        userNameTextView.setText(userName);
-                        emailTextView.setText(email);
-
-                    }
                 }
             }
 
@@ -123,19 +91,31 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public void onBackPressed() {
-        // do what you want to do when the "back" button is pressed.
-        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-        finish();
-    }
-    private void SignOut() {
-        gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Are you sure you want to logout?");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                finish();
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ProfileActivity.super.onBackPressed();
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
             }
         });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
