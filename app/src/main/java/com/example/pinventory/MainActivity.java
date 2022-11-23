@@ -249,18 +249,8 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
     ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
     {
         if(result.getContents()!=null){
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setTitle("Result");
-            builder.setMessage(result.getContents());
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                }
-            }).show();
             Intent i = new Intent(MainActivity.this, EditProductActivity.class);
             i.putExtra("productQR", result.getContents());
-
             startActivity(i);
 
         }
