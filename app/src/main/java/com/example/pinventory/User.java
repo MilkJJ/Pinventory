@@ -2,7 +2,8 @@ package com.example.pinventory;
 
 public class User {
 
-    public String userName, email, password;
+    public String userName, email,password;
+
 
     public User(){
 

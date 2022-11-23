@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +48,7 @@ public class AddProductActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseDatabase firebaseDatabase;
     private String productID;
-
+    private FirebaseUser user;
     private Uri mImageUri;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
@@ -182,6 +183,7 @@ public class AddProductActivity extends AppCompatActivity {
                                 public void onSuccess(Uri uri) {
                                     Uri downloadUrl = uri;
                                     Toast.makeText(AddProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
+                                    user = FirebaseAuth.getInstance().getCurrentUser();
 
                                     String productName = productNameEdt.getText().toString().trim();
                                     String productDesc = productDescEdt.getText().toString().trim();
@@ -189,6 +191,7 @@ public class AddProductActivity extends AppCompatActivity {
                                     String expiryDate = etDate.getText().toString().trim();
                                     String productImg = downloadUrl.toString(); //productImgEdt.getText().toString().trim();
                                     productID = productName;
+
                                     ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, expiryDate, productImg, productID);
 
                                     mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -196,6 +199,7 @@ public class AddProductActivity extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             progressBar.setVisibility(View.GONE);
                                             mDatabaseRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
                                                     .child(productID)
                                                     .setValue(productRVModel);
 

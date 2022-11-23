@@ -10,6 +10,7 @@ public class ProductRVModel implements Parcelable {
     private String expiryDate;
     private String productImg;
     private String productID;
+
     //private String productExpiry Date/QR Code
 
     public ProductRVModel() {
@@ -23,6 +24,7 @@ public class ProductRVModel implements Parcelable {
         this.expiryDate = expiryDate;
         this.productImg = productImg;
         this.productID = productID;
+
     }
 
     protected ProductRVModel(Parcel in) {

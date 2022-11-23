@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -47,7 +48,7 @@ public class EditProductActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseDatabase firebaseDatabase;
 
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference, testingRef;
     private DatabaseReference HistoryDBRef;
 
     private String productID;
@@ -98,7 +99,8 @@ public class EditProductActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         buttonChooseImage = findViewById(R.id.button_choose_image);
-
+        Bundle extras = getIntent().getExtras();
+        String qrText = null;
         productRVModel = getIntent().getParcelableExtra("product");
         if(productRVModel != null){
             productNameEdt.setText(productRVModel.getProductName());
@@ -108,9 +110,28 @@ public class EditProductActivity extends AppCompatActivity {
             expiryDateEdt.setText(productRVModel.getExpiryDate());
             productID = productRVModel.getProductID();
         }
+        else{
+//            if (extras != null) {
+//                qrText = extras.getString("productQR");
+//                Log.d("test",qrText);
+//
+//            }
+//            String finalQrText = qrText;
+//            productNameEdt.setText("123");
+//            productDescEdt.setText("getDesc");
+//            productQtyEdt.setText("getDesc");
+//            Picasso.with(EditProductActivity.this).load("https://firebasestorage.googleapis.com/v0/b/pinventory-5966c.appspot.com/o/uploads%2Fnull.png?alt=media&token=e2154ea7-0318-46f1-b424-7d2d65c094c1").into(productImage);
+//            expiryDateEdt.setText("12/12/12");
+//            productID = "456";
+//            Log.d("test",qrText);
+
+
+        }
+
 
         databaseReference = firebaseDatabase.getReference("Products")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
                 .child(productID);
 
         HistoryDBRef = firebaseDatabase.getReference("History");

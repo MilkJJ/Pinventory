@@ -1,5 +1,7 @@
 package com.example.pinventory;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +31,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -40,8 +46,10 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
     private FloatingActionButton addFAB;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference1;
 
     private ArrayList<ProductRVModel> productRVModelArrayList;
+    private ArrayList<ProductRVModel> QRList;
     private RelativeLayout bottomSheetRL;
     private ProductRVAdapter productRVAdapter;
     private SearchView mSearchView;
@@ -72,13 +80,43 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         addFAB = findViewById(R.id.idAddFAB);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Products").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference1 = firebaseDatabase.getReference("Products")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        databaseReference1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    QRList = new ArrayList<>();
+
+                    for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
+                        for(DataSnapshot productid : qrSnapshot.getChildren()) {
+                            System.out.println(qrSnapshot+"\n"+productid);
+                            productRVModelArrayList.add(productid.getValue(ProductRVModel.class));
+                            System.out.println(productRVModelArrayList);
+                        }
+                    }
+                    productRVAdapter = new ProductRVAdapter(productRVModelArrayList, MainActivity.this, MainActivity.this);
+                    productRV.setAdapter(productRVAdapter);
+                    if(!productRVModelArrayList.isEmpty()){
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
         productRVModelArrayList = new ArrayList<>();
         bottomSheetRL = findViewById(R.id.idRLBSheet);
 
-        productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
+      //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
         productRV.setLayoutManager(new LinearLayoutManager(this));
-        productRV.setAdapter(productRVAdapter);
+      //  productRV.setAdapter(productRVAdapter);
         addFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
             }
         });
 
-        getAllProducts();
+        // getAllProducts();
     }
 
     private void filterList(String text) {
@@ -104,40 +142,40 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         }
     }
 
-    private void getAllProducts() {
-        productRVModelArrayList.clear();
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                progressBar.setVisibility(View.GONE);
-                productRVModelArrayList.add(snapshot.getValue(ProductRVModel.class));
-                productRVAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                progressBar.setVisibility(View.GONE);
-                productRVAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                progressBar.setVisibility(View.GONE);
-                productRVAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                progressBar.setVisibility(View.GONE);
-                productRVAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
+//    private void getAllProducts() {
+//        productRVModelArrayList.clear();
+//        databaseReference1.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                progressBar.setVisibility(View.GONE);
+//                productRVModelArrayList.add(snapshot.getValue(ProductRVModel.class));
+//                productRVAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                progressBar.setVisibility(View.GONE);
+//                productRVAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//                progressBar.setVisibility(View.GONE);
+//                productRVAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                progressBar.setVisibility(View.GONE);
+//                productRVAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onProductClick(int position) {
@@ -159,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         ImageView productIV = layout.findViewById(R.id.idIVProduct);
 
         Button editBtn = layout.findViewById(R.id.idBtnEdit);
+        Button generateQR = layout.findViewById(R.id.idBtnView);
 
 
         productNameTV.setText(productRVModel.getProductName());
@@ -166,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         productQtyTV.setText("Stock: " + productRVModel.getProductQty());
         ExpiryDateTV.setText("Expiry: "+ productRVModel.getExpiryDate());
         Picasso.with(this).load(productRVModel.getProductImg())
-                .placeholder(R.drawable.ic_no_photo).fit().centerInside()
+                .placeholder(R. drawable.ic_no_photo).fit().centerInside()
                 .into(productIV);
 
         editBtn.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +216,16 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
                 startActivity(i);
             }
         });
+        generateQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, ViewQR.class);
+                //give value to generate qr
+                i.putExtra("makeQR",productRVModel.getProductID());
+
+                startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -184,15 +233,40 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume up to flash on");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
+    {
+        if(result.getContents()!=null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Result");
+            builder.setMessage(result.getContents());
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            }).show();
+            Intent i = new Intent(MainActivity.this, EditProductActivity.class);
+            i.putExtra("productQR", result.getContents());
 
+            startActivity(i);
+
+        }
+
+    });
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.mmQRCode:
-                Intent i = new Intent(MainActivity.this, ChangePassActivity.class);
-                startActivity(i);
-                this.finish();
+               scanCode();
                 return true;
 
             case R.id.mmHistory:

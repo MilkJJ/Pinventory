@@ -90,6 +90,15 @@
             android:text="Edit Product"
             android:textAllCaps="false"
             android:textColor="@color/white"/>
+        <Button
+            android:id="@+id/idBtnView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:text="View QR"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
 </RelativeLayout>

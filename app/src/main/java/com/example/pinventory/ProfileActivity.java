@@ -1,5 +1,6 @@
 package com.example.pinventory;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -78,6 +79,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
@@ -121,7 +123,12 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    public void onBackPressed() {
+        // do what you want to do when the "back" button is pressed.
+        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+        finish();
+    }
     private void SignOut() {
         gsc.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

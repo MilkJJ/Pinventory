@@ -99,7 +99,12 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
+    @Override
+    public void onBackPressed() {
+        // do what you want to do when the "back" button is pressed.
+        startActivity(new Intent(HistoryActivity.this, MainActivity.class));
+        finish();
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
