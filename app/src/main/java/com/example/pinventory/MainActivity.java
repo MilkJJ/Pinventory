@@ -84,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
 
                     for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
                         for(DataSnapshot productid : qrSnapshot.getChildren()) {
-                            System.out.println(qrSnapshot+"\n"+productid);
+                            //System.out.println(qrSnapshot+"\n"+productid);
                             productRVModelArrayList.add(productid.getValue(ProductRVModel.class));
-                            System.out.println(productRVModelArrayList);
+                            //System.out.println(productRVModelArrayList);
                         }
                     }
                     productRVAdapter = new ProductRVAdapter(productRVModelArrayList, MainActivity.this, MainActivity.this);

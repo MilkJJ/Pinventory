@@ -111,30 +111,52 @@ public class EditProductActivity extends AppCompatActivity {
             Picasso.with(this).load(productRVModel.getProductImg()).into(productImage);
             expiryDateEdt.setText(productRVModel.getExpiryDate());
             productID = productRVModel.getProductID();
+
+            databaseReference = firebaseDatabase.getReference("Products")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
+                    .child(productID);
         }
         else{
-//            if (extras != null) {
-//                qrText = extras.getString("productQR");
-//                Log.d("test",qrText);
-//
-//            }
-//            String finalQrText = qrText;
-//            productNameEdt.setText("123");
-//            productDescEdt.setText("getDesc");
-//            productQtyEdt.setText("getDesc");
-//            Picasso.with(EditProductActivity.this).load("https://firebasestorage.googleapis.com/v0/b/pinventory-5966c.appspot.com/o/uploads%2Fnull.png?alt=media&token=e2154ea7-0318-46f1-b424-7d2d65c094c1").into(productImage);
-//            expiryDateEdt.setText("12/12/12");
-//            productID = "456";
-//            Log.d("test",qrText);
 
+            if (extras != null) {
+                qrText = extras.getString("productQR");
+                Log.d("test2323",qrText);
 
+            }
+            testingRef =firebaseDatabase.getInstance().getReference("Products")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(qrText);
+
+            testingRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    System.out.println("KKKKK2");
+                    for(DataSnapshot ds: snapshot.getChildren() ){
+                        for(DataSnapshot productid : ds.getChildren()) {
+                            System.out.println(ds+"\n KKKKK4"+productid);
+                            ProductRVModel productRVModel = ds.getValue(ProductRVModel.class);
+                            System.out.println(productRVModel.getProductName());
+                            productNameEdt.setText(productRVModel.getProductName());
+                            productDescEdt.setText(productRVModel.getProductDesc());
+                            productQtyEdt.setText(productRVModel.getProductQty());
+                            Picasso.with(EditProductActivity.this).load(productRVModel.getProductImg()).into(productImage);
+                            expiryDateEdt.setText(productRVModel.getExpiryDate());
+                            productID = productRVModel.getProductID();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
 
 
-        databaseReference = firebaseDatabase.getReference("Products")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
-                .child(productID);
+
 
         HistoryDBRef = firebaseDatabase.getReference("History");
 
