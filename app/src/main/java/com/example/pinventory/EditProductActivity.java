@@ -63,6 +63,8 @@ public class EditProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_product);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
@@ -212,7 +214,10 @@ public class EditProductActivity extends AppCompatActivity {
         databaseReference.removeValue();
 
         Toast.makeText(this, "Product Removed!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(EditProductActivity.this, MainActivity.class));
+        Intent intent = new Intent(EditProductActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void openFileChooser(){

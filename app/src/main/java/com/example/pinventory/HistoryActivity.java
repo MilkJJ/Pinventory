@@ -39,6 +39,8 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         historyRV = findViewById(R.id.idRVHistory);
         progressBar = findViewById(R.id.progressBar);
 
