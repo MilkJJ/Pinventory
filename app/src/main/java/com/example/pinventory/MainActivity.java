@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         productRVModelArrayList = new ArrayList<>();
         bottomSheetRL = findViewById(R.id.idRLBSheet);
 
-      //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
+        //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
         productRV.setLayoutManager(new LinearLayoutManager(this));
-      //  productRV.setAdapter(productRVAdapter);
+        //  productRV.setAdapter(productRVAdapter);
         addFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         int id = item.getItemId();
         switch (id) {
             case R.id.mmQRCode:
-               scanCode();
+                scanCode();
                 return true;
 
             case R.id.mmHistory:
