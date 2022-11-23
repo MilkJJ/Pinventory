@@ -1,8 +1,5 @@
 package com.example.pinventory;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -11,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,7 +64,7 @@ public class ForgotPassword extends AppCompatActivity {
                 if (task.isSuccessful()){
                     Toast.makeText(ForgotPassword.this, "A link has been sent to your email!", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
-                    startActivity(new Intent(ForgotPassword.this, MainActivity.class));
+                    startActivity(new Intent(ForgotPassword.this, LoginActivity.class));
                 }else{
                     Toast.makeText(ForgotPassword.this, "Unable to reset password! Try again!", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);

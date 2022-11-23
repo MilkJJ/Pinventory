@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         progressBar = findViewById(R.id.progressBar);
         addFAB = findViewById(R.id.idAddFAB);
 
+        progressBar.setVisibility(View.GONE);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference1 = firebaseDatabase.getReference("Products")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    progressBar.setVisibility(View.VISIBLE);
                     QRList = new ArrayList<>();
 
                     for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
