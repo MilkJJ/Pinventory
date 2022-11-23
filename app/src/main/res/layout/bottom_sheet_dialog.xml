@@ -38,10 +38,11 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         android:layout_toRightOf="@id/idIVProduct"
+        android:inputType="textMultiLine"
         android:padding="3dp"
         android:text="Description"
-        android:textSize="17dp"
-        android:textColor="@color/black" />
+        android:textColor="@color/black"
+        android:textSize="17dp" />
 
     <TextView
         android:id="@+id/idTVQuantity"
