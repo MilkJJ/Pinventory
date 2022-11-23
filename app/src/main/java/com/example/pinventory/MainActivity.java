@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
                 Intent i = new Intent(MainActivity.this, ViewQR.class);
                 //give value to generate qr
                 i.putExtra("makeQR",productRVModel.getProductID());
-
+                i.putExtra("productQR",productRVModel);
                 startActivity(i);
             }
         });
