@@ -124,6 +124,7 @@ public class EditProductActivity extends AppCompatActivity {
                 Log.d("test2323",qrText);
 
             }
+            //new changes
             testingRef =firebaseDatabase.getInstance().getReference("Products")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(qrText);

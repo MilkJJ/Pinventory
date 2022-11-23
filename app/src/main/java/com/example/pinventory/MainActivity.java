@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
     private void scanCode() {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to flash on");
