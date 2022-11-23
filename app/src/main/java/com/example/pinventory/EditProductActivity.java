@@ -58,6 +58,8 @@ public class EditProductActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private StorageTask mUploadTask;
 
+    private boolean usingQR;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,10 +126,19 @@ public class EditProductActivity extends AppCompatActivity {
                 Log.d("test2323",qrText);
 
             }
+           String qr1 = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String qr2 = qrText;
+            String tempID = qr2.substring(qr1.length(),qr2.length());
+            System.out.println(tempID);
             //new changes
             testingRef =firebaseDatabase.getInstance().getReference("Products")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(qrText);
+
+            databaseReference =firebaseDatabase.getInstance().getReference("Products")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(qrText)
+                    .child(tempID);
 
             testingRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -136,7 +147,7 @@ public class EditProductActivity extends AppCompatActivity {
                     for(DataSnapshot ds: snapshot.getChildren() ){
                         for(DataSnapshot productid : ds.getChildren()) {
                             System.out.println(ds+"\n KKKKK4"+productid);
-                            ProductRVModel productRVModel = ds.getValue(ProductRVModel.class);
+                           productRVModel = ds.getValue(ProductRVModel.class);
                             System.out.println(productRVModel.getProductName());
                             productNameEdt.setText(productRVModel.getProductName());
                             productDescEdt.setText(productRVModel.getProductDesc());
@@ -356,6 +367,7 @@ public class EditProductActivity extends AppCompatActivity {
                     databaseReference.updateChildren(map);
                     Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(EditProductActivity.this, MainActivity.class));
+
                 }
 
                 @Override
@@ -363,7 +375,9 @@ public class EditProductActivity extends AppCompatActivity {
                     Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
                 }
             });
-        }else {
+        }
+
+        else {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
