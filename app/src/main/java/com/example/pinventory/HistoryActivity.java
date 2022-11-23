@@ -39,7 +39,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         historyRV = findViewById(R.id.idRVHistory);
         progressBar = findViewById(R.id.progressBar);
@@ -103,7 +103,6 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
     }
     @Override
     public void onBackPressed() {
-        // do what you want to do when the "back" button is pressed.
         startActivity(new Intent(HistoryActivity.this, MainActivity.class));
         finish();
     }
