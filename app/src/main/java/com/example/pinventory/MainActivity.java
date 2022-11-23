@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -180,6 +178,12 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
     @Override
     public void onProductClick(int position) {
         displayBottomSheet(productRVModelArrayList.get(position));
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(MainActivity.this, MainActivity.class));
+        finish();
     }
 
     private void displayBottomSheet(ProductRVModel productRVModel) {
