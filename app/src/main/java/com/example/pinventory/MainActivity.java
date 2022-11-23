@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         }
 
         if (filteredList.isEmpty()) {
-            Toast.makeText(this, "No data found!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No product found!", Toast.LENGTH_SHORT).show();
         } else {
             productRVAdapter.setFilteredList(filteredList);
         }
