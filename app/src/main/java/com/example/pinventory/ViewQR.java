@@ -1,10 +1,10 @@
 package com.example.pinventory;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.zxing.BarcodeFormat;
@@ -19,6 +19,9 @@ public class ViewQR extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
             ivOutput=findViewById(R.id.iv_output);
             String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Bundle resultIntent = getIntent().getExtras();
