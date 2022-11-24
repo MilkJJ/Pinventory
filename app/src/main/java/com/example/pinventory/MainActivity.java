@@ -1,7 +1,5 @@
 package com.example.pinventory;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -77,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         progressBar = findViewById(R.id.progressBar);
         addFAB = findViewById(R.id.idAddFAB);
 
+        progressBar.setVisibility(View.GONE);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference1 = firebaseDatabase.getReference("Products")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -85,13 +85,12 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    progressBar.setVisibility(View.VISIBLE);
                     QRList = new ArrayList<>();
 
                     for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
                         for(DataSnapshot productid : qrSnapshot.getChildren()) {
-                            //System.out.println(qrSnapshot+"\n"+productid);
                             productRVModelArrayList.add(productid.getValue(ProductRVModel.class));
-                            //System.out.println(productRVModelArrayList);
                         }
                     }
                     productRVAdapter = new ProductRVAdapter(productRVModelArrayList, MainActivity.this, MainActivity.this);
