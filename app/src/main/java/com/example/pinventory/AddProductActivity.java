@@ -1,7 +1,9 @@
 package com.example.pinventory;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,7 +57,7 @@ public class AddProductActivity extends AppCompatActivity {
     private DatabaseReference HistoryDBRef;
 
     private StorageTask mUploadTask;
-
+    boolean check = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,10 +118,60 @@ public class AddProductActivity extends AppCompatActivity {
         addProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
+
                     Toast.makeText(AddProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
-                } else {
+                }if(productNameEdt.getText().length()<1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
+                    builder.setTitle("Insert Fail ");
+                    builder.setMessage("Name cannot be empty");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+                    check=true;
+                }
+                if(productQtyEdt.getText().length()<1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
+                    builder.setTitle("Insert Fail ");
+                    builder.setMessage("Quantity cannot be empty");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+                    check=true;
+                }
+                if(productDescEdt.getText().length()<1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
+                    builder.setTitle("Insert Fail ");
+                    builder.setMessage("Description cannot be empty");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+                    check=true;
+                } if(etDate.getText().length()<1) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
+                    builder.setTitle("Insert Fail ");
+                    builder.setMessage("Date cannot be empty");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+                    check=true;
+                }
+
+                if(!check) {
+                    progressBar.setVisibility(View.VISIBLE);
                     uploadFile();
                     saveToHistory();
                 }
