@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Item List"
+        android:id="@+id/itemList"
+        android:icon="@drawable/baseline_inventory_24" />
+    <item android:title="User List"
+        android:id="@+id/userList"
+        android:icon="@drawable/baseline_supervised_user_circle_24"/>
+    <item android:title="History Log"
+        android:id="@+id/historyList"
+        android:icon="@drawable/baseline_history_24"/>
+
+</menu>

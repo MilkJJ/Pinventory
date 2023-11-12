@@ -15,6 +15,10 @@
     <color name="red">#FF2600</color>
     <color name="blue_shade_1">#0e2433</color>
     <color name="blue_shade_2">#1C4966</color>
-
+    <color name="custom_blue">#1c4081</color>
+    <color name="custom_light_blue">#82d3ff</color>
+    <color name="custom_grey">#4f5354</color>
+    <color name="status_bar_color">#1c4081</color>
+    <color name="cardColor">#fff5df</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:overrise="true">#296D98</color>
 </resources>

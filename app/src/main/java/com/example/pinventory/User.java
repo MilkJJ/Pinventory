@@ -2,7 +2,7 @@ package com.example.pinventory;
 
 public class User {
 
-    public String userName, email, role;
+    public String userName, email,role;
 
 
     public User(){
