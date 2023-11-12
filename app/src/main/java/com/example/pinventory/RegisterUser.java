@@ -106,8 +106,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()){
-                            String pwd = password;
-                            User user = new User(userName, email,pwd);
+                            User user = new User(userName, email,"user");
 
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
