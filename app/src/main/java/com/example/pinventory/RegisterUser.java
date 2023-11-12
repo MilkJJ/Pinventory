@@ -2,6 +2,7 @@ package com.example.pinventory;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -106,8 +107,8 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if(task.isSuccessful()){
-                            String pwd = password;
-                            User user = new User(userName, email,pwd);
+//                            String pwd = password;
+                            User user = new User(userName, email, "user");
 
                             FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -122,8 +123,9 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
                                                 //Redirect to Login Layout
                                             } else{
-                                                Toast.makeText(RegisterUser.this, "Failed to register! Please try again!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(RegisterUser.this, "Failed to insert to realtime DB", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
+                                                startActivity(new Intent(RegisterUser.this, LoginActivity.class));
                                             }
                                         }
                                     });

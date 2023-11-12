@@ -58,6 +58,7 @@ public class AddProductActivity extends AppCompatActivity {
 
     private StorageTask mUploadTask;
     boolean check = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +72,7 @@ public class AddProductActivity extends AppCompatActivity {
         etDate = findViewById(R.id.et_date);
 
         Date d = new Date();
-        CharSequence s  = DateFormat.format("d/MM/yyyy ", d.getTime());
+        CharSequence s = DateFormat.format("d/MM/yyyy ", d.getTime());
 
         //final Calender calender = Calender.getInstance();
         final int year = 2022; //calender.get(Calender.YEAR);
@@ -85,11 +86,11 @@ public class AddProductActivity extends AppCompatActivity {
                         AddProductActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int day) {
-                        month = month+1;
-                        String date = day+"/"+month+"/"+year;
+                        month = month + 1;
+                        String date = day + "/" + month + "/" + year;
                         etDate.setText(date);
                     }
-                },year,month,day);
+                }, year, month, day);
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 datePickerDialog.show();
             }
@@ -122,7 +123,8 @@ public class AddProductActivity extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
 
                     Toast.makeText(AddProductActivity.this, "Upload in Progress!", Toast.LENGTH_SHORT).show();
-                }if(productNameEdt.getText().length()<1) {
+                }
+                if (productNameEdt.getText().length() < 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
                     builder.setTitle("Insert Fail ");
                     builder.setMessage("Name cannot be empty");
@@ -132,9 +134,9 @@ public class AddProductActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     }).show();
-                    check=true;
+                    check = true;
                 }
-                if(productQtyEdt.getText().length()<1) {
+                if (productQtyEdt.getText().length() < 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
                     builder.setTitle("Insert Fail ");
                     builder.setMessage("Quantity cannot be empty");
@@ -144,9 +146,9 @@ public class AddProductActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     }).show();
-                    check=true;
+                    check = true;
                 }
-                if(productDescEdt.getText().length()<1) {
+                if (productDescEdt.getText().length() < 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
                     builder.setTitle("Insert Fail ");
                     builder.setMessage("Description cannot be empty");
@@ -156,8 +158,9 @@ public class AddProductActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     }).show();
-                    check=true;
-                } if(etDate.getText().length()<1) {
+                    check = true;
+                }
+                if (etDate.getText().length() < 1) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(AddProductActivity.this);
                     builder.setTitle("Insert Fail ");
                     builder.setMessage("Date cannot be empty");
@@ -167,10 +170,10 @@ public class AddProductActivity extends AppCompatActivity {
                             dialogInterface.dismiss();
                         }
                     }).show();
-                    check=true;
+                    check = true;
                 }
 
-                if(!check) {
+                if (!check) {
                     progressBar.setVisibility(View.VISIBLE);
                     uploadFile();
                     saveToHistory();
@@ -181,7 +184,7 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void saveToHistory() {
         Date d = new Date();
-        CharSequence s  = DateFormat.format("d/MM/yyyy ", d.getTime());
+        CharSequence s = DateFormat.format("d/MM/yyyy ", d.getTime());
 
         HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -190,7 +193,7 @@ public class AddProductActivity extends AppCompatActivity {
                 HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
 
                 HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(System.currentTimeMillis()+ "")
+                        .child(System.currentTimeMillis() + "")
                         .setValue(historyRVModel);
             }
 
@@ -257,7 +260,7 @@ public class AddProductActivity extends AppCompatActivity {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             progressBar.setVisibility(View.GONE);
                                             mDatabaseRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid() + productID)
                                                     .child(productID)
                                                     .setValue(productRVModel);
 

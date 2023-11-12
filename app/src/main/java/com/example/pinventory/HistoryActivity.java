@@ -112,7 +112,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         int id = item.getItemId();
         switch (id) {
             case R.id.mmQRCode:
-                Intent i = new Intent(HistoryActivity.this, ChangePassActivity.class);
+                Intent i = new Intent(HistoryActivity.this, CaptureAct.class);
                 startActivity(i);
                 this.finish();
                 return true;
