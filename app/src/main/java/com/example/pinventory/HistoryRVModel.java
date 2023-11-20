@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 public class HistoryRVModel implements Parcelable {
     private String actionHistory;
+    private String date;
+    private String actionType;
+
 
     public HistoryRVModel() {
         //Empty Constructor
@@ -29,6 +32,9 @@ public class HistoryRVModel implements Parcelable {
             return new HistoryRVModel[size];
         }
     };
+
+    public HistoryRVModel(String itemId, String actionHistory) {
+    }
 
     public String getActionHistory() {
         return actionHistory;

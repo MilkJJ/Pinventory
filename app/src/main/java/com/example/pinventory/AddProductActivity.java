@@ -189,9 +189,8 @@ public class AddProductActivity extends AppCompatActivity {
         HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String actionHistory = "'" + productNameEdt.getText().toString().trim() + "' has been added on " + s.toString();
+                String actionHistory = "'" + productNameEdt.getText().toString().trim() + "' has been added on " + s.toString() + "by {username}";
                 HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
-
                 HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(System.currentTimeMillis() + "")
                         .setValue(historyRVModel);
