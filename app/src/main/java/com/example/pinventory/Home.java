@@ -60,8 +60,8 @@ public class Home extends Application {
                             Intent intent = new Intent(Home.this, MainActivity.class);
                             intent.putExtra("userID", uid);
                             UserData.getInstance().setUserID(uid);
-                            startActivity(intent);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                             //finish(); // Close the login activity
                         } else {
                             // User status is false (disabled), show a message
