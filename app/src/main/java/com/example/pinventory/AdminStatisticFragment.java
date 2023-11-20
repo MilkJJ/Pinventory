@@ -66,29 +66,26 @@ public class AdminStatisticFragment extends Fragment implements HistoryRVAdapter
             public void onChildAdded(@NonNull DataSnapshot userSnapshot, @Nullable String previousChildName) {
                 progressBar.setVisibility(View.GONE);
 
-                TreeMap<String, HistoryRVModel> itemMap = new TreeMap<>(Collections.reverseOrder());
+                //TreeMap<String, HistoryRVModel> itemMap = new TreeMap<>(Collections.reverseOrder());
 
                 // Iterate through each user's branch under "History"
                 for (DataSnapshot itemSnapshot : userSnapshot.getChildren()) {
                     // Assuming each item has a unique identifier
-                    //String itemId = itemSnapshot.getKey();
+                    String itemId = itemSnapshot.getKey();
 
                     // Assuming each item has an "actionHistory" field
-//                    String actionHistory1 = itemSnapshot.child("actionHistory").getValue(String.class);
-//
-//                    if (itemId != null && actionHistory1 != null) {
-                        // Create a HistoryRVModel or use the data as needed
-                        //HistoryRVModel historyModel = new HistoryRVModel(itemId, actionHistory);
+                    String actionHistory1 = itemSnapshot.child("actionHistory").getValue(String.class);
 
-                        HistoryRVModel actionHistory = itemSnapshot.getValue(HistoryRVModel.class);
+                   if (itemId != null && actionHistory1 != null) {
+                       // Create a HistoryRVModel or use the data as needed
+                       //HistoryRVModel historyModel = new HistoryRVModel(itemId, actionHistory);
 
-                        //itemMap.put(actionHistory);
+                       HistoryRVModel actionHistory = itemSnapshot.getValue(HistoryRVModel.class);
 
-                        historyRVModelArrayList.add(actionHistory);
+                       historyRVModelArrayList.add(actionHistory);
 
-                        //historyRVModelArrayList.add(actionHistory);
-
-                        historyRVAdapter.notifyDataSetChanged();
+                       historyRVAdapter.notifyDataSetChanged();
+                   }
 
                 }
             }
