@@ -68,37 +68,47 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         String userName = editTextUserName.getText().toString().trim();
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-
         if(userName.isEmpty()){
             editTextUserName.setError("Username is required!");
             editTextUserName.requestFocus();
             return;
         }
-
         if(email.isEmpty()){
             editTextEmail.setError("Email is required!");
             editTextEmail.requestFocus();
             return;
         }
-
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             editTextEmail.setError("Please provide a valid email!");
             editTextEmail.requestFocus();
             return;
         }
-
         if(password.isEmpty()){
             editTextPassword.setError("Password is required!");
             editTextPassword.requestFocus();
             return;
         }
-
-        if(password.length() < 6){
-            editTextPassword.setError("Minimum password length is 6 characters!");
+        if(password.length() < 8){
+            editTextPassword.setError("Minimum password length is 8 characters!");
             editTextPassword.requestFocus();
             return;
         }
-
+        // New checks for uppercase letter and symbol
+        if (!containsUppercase(password)) {
+            editTextPassword.setError("Password must contain at least one uppercase letter!");
+            editTextPassword.requestFocus();
+            return;
+        }
+        if (!containsSymbol(password)) {
+            editTextPassword.setError("Password must contain at least one symbol!");
+            editTextPassword.requestFocus();
+            return;
+        }
+        if (!containsNumber(password)) {
+            editTextPassword.setError("Password must contain at least one digit!");
+            editTextPassword.requestFocus();
+            return;
+        }
         progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -133,4 +143,32 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                     }
                 });
     }
+    private boolean containsUppercase(String password) {
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Helper method to check if the password contains at least one symbol
+    private boolean containsSymbol(String password) {
+        String symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/";
+        for (char c : password.toCharArray()) {
+            if (symbols.contains(String.valueOf(c))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean containsNumber(String password) {
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
+
