@@ -2,6 +2,7 @@ package com.example.pinventory;
 
 import android.app.Application;
 import android.content.Intent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ import com.google.firebase.database.ValueEventListener;
 public class Home extends Application {
 
     private DatabaseReference userDatabase;
+    private DatabaseReference mDatabase;
+
     @Override
     public void onCreate() {
         userDatabase = FirebaseDatabase.getInstance().getReference("Users");
@@ -35,21 +38,36 @@ public class Home extends Application {
     }
 
     private void checkUserRole(final String uid) {
-        userDatabase.child(uid).child("role").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabase.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String role = dataSnapshot.getValue(String.class);
-                if (role != null) {
-                    if (role.equals("admin")) {
+                User user = dataSnapshot.getValue(User.class);
+
+                if (user != null) {
+                    if (user.getRole().equals("admin")) {
                         // User is an admin, go to AdminHomepage
                         Intent intent = new Intent(Home.this, AdminHomepage.class);
+                        intent.putExtra("adminId", uid); // Pass the uid as an extra
+                        UserData.getInstance().setUserID(uid);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
+                        //finish(); // Close the login activity
                     } else {
-                        // User is a regular user, go to MainActivity
-                        Intent intent = new Intent(Home.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        // User is a regular user, check the status
+                        if (user.isStatus()) {
+                            // User status is true (enabled), go to MainActivity
+                            Intent intent = new Intent(Home.this, MainActivity.class);
+                            intent.putExtra("userID", uid);
+                            UserData.getInstance().setUserID(uid);
+                            startActivity(intent);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            //finish(); // Close the login activity
+                        } else {
+                            // User status is false (disabled), show a message
+                            Toast.makeText(Home.this, "Your account is disabled. Please contact the administrator.", Toast.LENGTH_SHORT).show();
+                            FirebaseAuth.getInstance().signOut(); // Sign out the user
+                        }
                     }
                 }
             }
@@ -61,4 +79,5 @@ public class Home extends Application {
             }
         });
     }
+
 }

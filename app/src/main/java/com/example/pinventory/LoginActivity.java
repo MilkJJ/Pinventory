@@ -150,25 +150,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
     private void checkUserRole(final String uid) {
-        mDatabase.child(uid).child("role").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String role = dataSnapshot.getValue(String.class);
-                if (role != null) {
-                    if (role.equals("admin")) {
+                User user = dataSnapshot.getValue(User.class);
+
+                if (user != null) {
+                    if (user.getRole().equals("admin")) {
                         // User is an admin, go to AdminHomepage
                         Intent intent = new Intent(LoginActivity.this, AdminHomepage.class);
                         intent.putExtra("adminId", uid); // Pass the uid as an extra
                         UserData.getInstance().setUserID(uid);
                         startActivity(intent);
+                        finish(); // Close the login activity
                     } else {
-                        // User is a regular user, go to MainActivity
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("userID",uid);
-                        UserData.getInstance().setUserID(uid);
-                        startActivity(intent);
+                        // User is a regular user, check the status
+                        if (user.isStatus()) {
+                            // User status is true (enabled), go to MainActivity
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("userID", uid);
+                            UserData.getInstance().setUserID(uid);
+                            startActivity(intent);
+                            finish(); // Close the login activity
+                        } else {
+                            // User status is false (disabled), show a message
+                            Toast.makeText(LoginActivity.this, "Your account is disabled. Please contact the administrator.", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                            FirebaseAuth.getInstance().signOut(); // Sign out the user
+                        }
                     }
-                    finish(); // Close the login activity
                 }
             }
 
@@ -179,4 +189,5 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
 }

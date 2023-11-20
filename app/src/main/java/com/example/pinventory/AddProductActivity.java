@@ -200,7 +200,7 @@ public class AddProductActivity extends AppCompatActivity {
                 // Check if the user exists
                 if (userSnapshot.exists()) {
                     // Get the username from the "Users" node
-                    String username = userSnapshot.child("username").getValue(String.class);
+                    String username = userSnapshot.child("userName").getValue(String.class);
 
                     if (username != null) {
                         // Use the username in the action history
@@ -274,7 +274,7 @@ public class AddProductActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     Uri downloadUrl = uri;
-                                    Toast.makeText(AddProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(AddProductActivity.this, "Product Added Successfully!", Toast.LENGTH_LONG).show();
                                     user = FirebaseAuth.getInstance().getCurrentUser();
 
                                     String productName = productNameEdt.getText().toString().trim();

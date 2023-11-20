@@ -42,12 +42,36 @@ public class AdminUserListAdapter extends RecyclerView.Adapter<AdminUserListAdap
                 promoteToAdmin(user,holder);
             }
         });
+
+        holder.btnDisableAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                disableAccount(user,holder);
+            }
+        });
+
+        holder.btnEnableAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enableAccount(user,holder);
+            }
+        });
+
         if ("admin".equals(user.role)) {
             holder.btnPromote.setVisibility(View.GONE);
             holder.ivStar.setVisibility(View.VISIBLE);
         } else {
             holder.btnPromote.setVisibility(View.VISIBLE);
             holder.ivStar.setVisibility(View.GONE);
+        }
+
+        if (user.status == false) {
+            holder.btnDisableAcc.setVisibility(View.GONE);
+            holder.btnEnableAcc.setVisibility(View.VISIBLE);
+
+        } else {
+            holder.btnDisableAcc.setVisibility(View.VISIBLE);
+            holder.btnEnableAcc.setVisibility(View.GONE);
         }
 
     }
@@ -60,7 +84,7 @@ public class AdminUserListAdapter extends RecyclerView.Adapter<AdminUserListAdap
     static class UserViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView,ivStar;
         TextView txtEmail, txtRole;
-        Button btnPromote;
+        Button btnPromote, btnDisableAcc, btnEnableAcc;
 
         UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +93,8 @@ public class AdminUserListAdapter extends RecyclerView.Adapter<AdminUserListAdap
             txtEmail = itemView.findViewById(R.id.txt_Email);
             txtRole = itemView.findViewById(R.id.txt_user_role);
             btnPromote = itemView.findViewById(R.id.btn_promote);
+            btnDisableAcc = itemView.findViewById(R.id.btn_disable_acc);
+            btnEnableAcc = itemView.findViewById(R.id.btn_enable_acc);
         }
     }
     private void promoteToAdmin(User user,UserViewHolder holder) {
@@ -83,5 +109,33 @@ public class AdminUserListAdapter extends RecyclerView.Adapter<AdminUserListAdap
         currentUserReference.child("role").setValue("admin");
         holder.btnPromote.setVisibility(View.GONE);
         holder.ivStar.setVisibility(View.VISIBLE);
+    }
+
+    private void disableAccount(User user,UserViewHolder holder) {
+        // Update the user's role to "admin" in Firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference usersReference = database.getReference("Users");
+
+        // Assuming your user node has a unique identifier (UID)
+        DatabaseReference currentUserReference = usersReference.child(user.getUid());
+
+        // Update the role
+        currentUserReference.child("status").setValue(false);
+        holder.btnDisableAcc.setVisibility(View.GONE);
+        holder.btnEnableAcc.setVisibility(View.VISIBLE);
+    }
+
+    private void enableAccount(User user,UserViewHolder holder) {
+        // Update the user's role to "admin" in Firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference usersReference = database.getReference("Users");
+
+        // Assuming your user node has a unique identifier (UID)
+        DatabaseReference currentUserReference = usersReference.child(user.getUid());
+
+        // Update the role
+        currentUserReference.child("status").setValue(true);
+        holder.btnEnableAcc.setVisibility(View.GONE);
+        holder.btnDisableAcc.setVisibility(View.VISIBLE);
     }
 }
