@@ -56,6 +56,7 @@ public class AddProductActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseRef;
     private DatabaseReference HistoryDBRef;
 
+    private DatabaseReference mDatabase;
     private StorageTask mUploadTask;
     boolean check = false;
 
@@ -186,14 +187,44 @@ public class AddProductActivity extends AppCompatActivity {
         Date d = new Date();
         CharSequence s = DateFormat.format("d/MM/yyyy ", d.getTime());
 
-        HistoryDBRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Get the current user's UID
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Reference to the "Users" node
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("Users");
+
+        // Retrieve the current user's username
+        usersRef.child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String actionHistory = "'" + productNameEdt.getText().toString().trim() + "' has been added on " + s.toString() + "by {username}";
-                HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
-                HistoryDBRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(System.currentTimeMillis() + "")
-                        .setValue(historyRVModel);
+            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                // Check if the user exists
+                if (userSnapshot.exists()) {
+                    // Get the username from the "Users" node
+                    String username = userSnapshot.child("username").getValue(String.class);
+
+                    if (username != null) {
+                        // Use the username in the action history
+                        String actionHistory = "'" + productNameEdt.getText().toString().trim() +
+                                "' has been added on " + s.toString() + " by " + username;
+
+                        // Create a HistoryRVModel object
+                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
+
+                        // Reference to the "History" node
+                        DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference("History");
+
+                        // Save the action history to the "History" node
+                        historyRef.child(currentUserId)
+                                .child(System.currentTimeMillis() + "")
+                                .setValue(historyRVModel);
+                    } else {
+                        // Handle the case where the username is null
+                        Toast.makeText(AddProductActivity.this, "Username not found.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Handle the case where the user does not exist
+                    Toast.makeText(AddProductActivity.this, "User not found.", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -202,6 +233,7 @@ public class AddProductActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void openFileChooser() {
         Intent intent = new Intent();
@@ -254,6 +286,9 @@ public class AddProductActivity extends AppCompatActivity {
 
                                     ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, expiryDate, productImg, productID);
 
+                                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
                                     mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -264,7 +299,8 @@ public class AddProductActivity extends AppCompatActivity {
                                                     .setValue(productRVModel);
 
                                             Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(AddProductActivity.this, MainActivity.class));
+                                            checkUserRole(firebaseUser.getUid());
+                                            //startActivity(new Intent(AddProductActivity.this, MainActivity.class));
                                         }
 
                                         @Override
@@ -297,4 +333,34 @@ public class AddProductActivity extends AppCompatActivity {
 
     ;
 
+    private void checkUserRole(final String uid) {
+        mDatabase.child(uid).child("role").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String role = dataSnapshot.getValue(String.class);
+                if (role != null) {
+                    if (role.equals("admin")) {
+                        // User is an admin, go to AdminHomepage
+                        Intent intent = new Intent(AddProductActivity.this, AdminHomepage.class);
+                        intent.putExtra("adminId", uid); // Pass the uid as an extra
+                        UserData.getInstance().setUserID(uid);
+                        startActivity(intent);
+                    } else {
+                        // User is a regular user, go to MainActivity
+                        Intent intent = new Intent(AddProductActivity.this, MainActivity.class);
+                        intent.putExtra("userID",uid);
+                        UserData.getInstance().setUserID(uid);
+                        startActivity(intent);
+                    }
+                    finish(); // Close the login activity
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error if needed
+                Toast.makeText(AddProductActivity.this, "Failed to check user role.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
