@@ -38,21 +38,19 @@ public class AdminHomepage extends AppCompatActivity {
                         adminItemListFragment.setArguments(argsH);
                         loadFragment(adminItemListFragment);
                         return true;
-                   /* case R.id.userList:
-                        AdminCameraFragment adminCameraFragment = new AdminCameraFragment();
+                    case R.id.userList:
+                        AdminUserListFragment adminUserListFragment = new AdminUserListFragment();
                         Bundle args = new Bundle();
                         args.putString("adminID", adminId); // Pass the UID to the fragment
-                        adminCameraFragment.setArguments(args); // Set the arguments
-                        loadFragment(adminCameraFragment);
-                        toolbar.setTitle("Camera List");
-                        return true;*/
+                        adminUserListFragment.setArguments(args); // Set the arguments
+                        loadFragment(adminUserListFragment);
+                        return true;
                     case R.id.historyList:
                         AdminStatisticFragment adminStatisticFragment = new AdminStatisticFragment();
                         Bundle argsHis = new Bundle();
                         argsHis.putString("adminID", adminId);
                         adminStatisticFragment.setArguments(argsHis);
                         loadFragment(adminStatisticFragment);
-                        //toolbar.setTitle("Statistics");
                         return true;
                 }
                 return false;
