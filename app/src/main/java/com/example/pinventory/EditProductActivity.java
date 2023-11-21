@@ -122,10 +122,6 @@ public class EditProductActivity extends AppCompatActivity {
             expiryDateEdt.setText(productRVModel.getExpiryDate());
             productID = productRVModel.getProductID();
 
-            // Update the database reference path
-            databaseReference = firebaseDatabase.getReference("Products").child(productID);
-            mStorageRef = FirebaseStorage.getInstance().getReference("uploads/");
-
         }
         else {
             if (extras != null) {
@@ -304,10 +300,11 @@ public class EditProductActivity extends AppCompatActivity {
 
     private void updateProduct() {
         String productIdToUpdate;
-
+        productRVModel = getIntent().getParcelableExtra("product");
         if (productRVModel != null) {
             // If productRVModel is available, use its productID
             productIdToUpdate = productRVModel.getProductID();
+
         } else {
             // If productRVModel is null, get the productID from Intent extras and decrypt
             String encryptedProductId = getIntent().getStringExtra("productQR");
@@ -371,10 +368,8 @@ public class EditProductActivity extends AppCompatActivity {
                             progressBar.setProgress((int) progress);
                         }
                     });
-        } else if (!productRVModel.getProductImg().isEmpty()) {
-            // If there is no new image, use the existing product ID for the file reference
-            StorageReference fileReference = mStorageRef.child(productIdToUpdate + "/" + productIdToUpdate + "." + getFileExtension(mImageUri));
-
+        }else {
+            // No new image selected, use the existing product ID for the file reference
             String productName = productNameEdt.getText().toString().trim();
             String productDesc = productDescEdt.getText().toString().trim();
             String productQty = productQtyEdt.getText().toString().trim();
@@ -386,24 +381,44 @@ public class EditProductActivity extends AppCompatActivity {
             map.put("productQty", productQty);
             map.put("expiryDate", expiryDate);
             map.put("productID", productIdToUpdate);
-
+            Log.d("test123123",productIdToUpdate);
+            // No new image selected, get the existing product image from the database
             databaseReference.child(productIdToUpdate).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    progressBar.setVisibility(View.GONE);
-                    databaseReference.child(productIdToUpdate).updateChildren(map);
-                    Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
-                    checkUserRole(firebaseUser.getUid());
+                    // Get the existing product image URL from the database
+                    String existingProductImg = snapshot.child("productImg").getValue(String.class);
+                    // Check if the product image URL exists
+                    if (!existingProductImg.isEmpty()) {
+                        // Use the existing product image URL in the map
+                        map.put("productImg", existingProductImg);
+                        // Update the product information in the database
+                        databaseReference.child(productIdToUpdate).updateChildren(map)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        progressBar.setVisibility(View.GONE);
+                                        Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
+                                        checkUserRole(firebaseUser.getUid());
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        // Handle the case where the existing product image URL is empty
+                        Toast.makeText(EditProductActivity.this, "Existing product image URL is empty", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProductActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
-            progressBar.setVisibility(View.GONE);
-            Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
     }
 
