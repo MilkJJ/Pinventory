@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
                 return true;
             }
         });
-
+        productRVModelArrayList = new ArrayList<>();
         productRV = findViewById(R.id.idRVProducts);
         progressBar = findViewById(R.id.progressBar);
         addFAB = findViewById(R.id.idAddFAB);
@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         progressBar.setVisibility(View.GONE);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference1 = firebaseDatabase.getReference("Products")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference1 = firebaseDatabase.getReference("Products");
 
         databaseReference1.addValueEventListener(new ValueEventListener() {
             @Override
@@ -91,14 +90,12 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
                     // Get the current user's ID
                     String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                    for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
-                        for (DataSnapshot productSnapshot : qrSnapshot.getChildren()) {
-                            ProductRVModel product = productSnapshot.getValue(ProductRVModel.class);
+                    for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                        ProductRVModel product = productSnapshot.getValue(ProductRVModel.class);
 
-                            // Check if the product was created by the current user
-                            if (product != null && product.getCreatedBy().equals(currentUserID)) {
-                                productRVModelArrayList.add(product);
-                            }
+                        // Check if the product was created by the current user
+                        if (product != null && product.getCreatedBy().equals(currentUserID)) {
+                            productRVModelArrayList.add(product);
                         }
                     }
 
@@ -116,12 +113,12 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
         });
 
 
-        productRVModelArrayList = new ArrayList<>();
-        bottomSheetRL = findViewById(R.id.idRLBSheet);
 
-        //  productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
+        bottomSheetRL = findViewById(R.id.idRLBSheet);
+        productRVAdapter = new ProductRVAdapter(productRVModelArrayList, this, this);
         productRV.setLayoutManager(new LinearLayoutManager(this));
-        //  productRV.setAdapter(productRVAdapter);
+        productRV.setAdapter(productRVAdapter);
+
         addFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

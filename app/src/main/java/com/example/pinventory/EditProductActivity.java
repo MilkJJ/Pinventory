@@ -443,16 +443,13 @@ public class EditProductActivity extends AppCompatActivity {
         });
     }
     private String decryptQRCode(String encryptedQRCode) {
+        // Calculate the middle index
+        int middleIndex = encryptedQRCode.length() / 2;
 
-        String encryptedProductID = encryptedQRCode;
-
-        // Extract the original product ID (remove the 3 random characters)
-        int middleIndex = encryptedProductID.length() / 2;
-        StringBuilder decryptedProductID = new StringBuilder();
-        decryptedProductID.append(encryptedProductID.charAt(middleIndex - 1));
-        decryptedProductID.append(encryptedProductID.charAt(middleIndex));
-        decryptedProductID.append(encryptedProductID.charAt(middleIndex + 1));
-
+        // Remove the 3 characters from the middle of the encrypted QR code
+        StringBuilder decryptedProductID = new StringBuilder(encryptedQRCode);
+        decryptedProductID.delete(middleIndex - 1, middleIndex + 2);
+        Log.d("test2323", decryptedProductID.toString());
         return decryptedProductID.toString();
     }
     private void loadProductInformation(String productID) {
