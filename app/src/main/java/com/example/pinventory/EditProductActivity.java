@@ -75,7 +75,8 @@ public class EditProductActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads/");
+        databaseReference = firebaseDatabase.getReference("Products");
         productImage = findViewById(R.id.idProductImage);
         productNameEdt = findViewById(R.id.idEdtProductName);
         productDescEdt = findViewById(R.id.idEdtProductDesc);
@@ -123,14 +124,14 @@ public class EditProductActivity extends AppCompatActivity {
 
             // Update the database reference path
             databaseReference = firebaseDatabase.getReference("Products").child(productID);
-            mStorageRef = FirebaseStorage.getInstance().getReference("uploads").child(productID);
+            mStorageRef = FirebaseStorage.getInstance().getReference("uploads/");
+
         }
         else {
             if (extras != null) {
                 qrText = extras.getString("productQR");
                 Log.d("test2323", qrText);
                 String decryptedProductID = decryptQRCode(qrText);
-
                 // Load the product information using the decrypted product ID
                 loadProductInformation(decryptedProductID);
             }
@@ -301,16 +302,26 @@ public class EditProductActivity extends AppCompatActivity {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void updateProduct(){
-        if(mImageUri != null){
-            StorageReference fileReference = mStorageRef.child(productID
-                    + "." + getFileExtension(mImageUri));
+    private void updateProduct() {
+        String productIdToUpdate;
 
+        if (productRVModel != null) {
+            // If productRVModel is available, use its productID
+            productIdToUpdate = productRVModel.getProductID();
+        } else {
+            // If productRVModel is null, get the productID from Intent extras and decrypt
+            String encryptedProductId = getIntent().getStringExtra("productQR");
+            productIdToUpdate = decryptQRCode(encryptedProductId);
+        }
+
+        if (mImageUri != null) {
+            Log.d("StorageReference1",productIdToUpdate);
+            StorageReference fileReference = mStorageRef.child(productIdToUpdate + "/" + productIdToUpdate + "." + getFileExtension(mImageUri));
+            Log.d("StorageReference", "Storage Reference Path: " + fileReference.getPath());
             mUploadTask = fileReference.putFile(mImageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                             fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
@@ -320,27 +331,22 @@ public class EditProductActivity extends AppCompatActivity {
                                     String productQty = productQtyEdt.getText().toString().trim();
                                     String expiryDate = expiryDateEdt.getText().toString().trim();
                                     String productImg = downloadUrl.toString();
-                                    //Date and Bar/QR
 
                                     Map<String, Object> map = new HashMap<>();
-
                                     map.put("productName", productName);
                                     map.put("productDesc", productDesc);
                                     map.put("productQty", productQty);
                                     map.put("expiryDate", expiryDate);
                                     map.put("productImg", productImg);
-                                    map.put("productID", productID);
+                                    map.put("productID", productIdToUpdate);
 
-                                    //Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
-
-                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    databaseReference.child(productIdToUpdate).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             progressBar.setVisibility(View.GONE);
-                                            databaseReference.updateChildren(map);
+                                            databaseReference.child(productIdToUpdate).updateChildren(map);
                                             Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
                                             checkUserRole(firebaseUser.getUid());
-                                            //startActivity(new Intent(EditProductActivity.this, MainActivity.class));
                                         }
 
                                         @Override
@@ -366,32 +372,28 @@ public class EditProductActivity extends AppCompatActivity {
                         }
                     });
         } else if (!productRVModel.getProductImg().isEmpty()) {
+            // If there is no new image, use the existing product ID for the file reference
+            StorageReference fileReference = mStorageRef.child(productIdToUpdate + "/" + productIdToUpdate + "." + getFileExtension(mImageUri));
+
             String productName = productNameEdt.getText().toString().trim();
             String productDesc = productDescEdt.getText().toString().trim();
             String productQty = productQtyEdt.getText().toString().trim();
             String expiryDate = expiryDateEdt.getText().toString().trim();
 
-            //Date and Bar/QR
-
             Map<String, Object> map = new HashMap<>();
-
             map.put("productName", productName);
             map.put("productDesc", productDesc);
             map.put("productQty", productQty);
             map.put("expiryDate", expiryDate);
-            map.put("productID", productID);
+            map.put("productID", productIdToUpdate);
 
-            //Toast.makeText(EditProductActivity.this, "Upload Successfully!", Toast.LENGTH_LONG).show();
-
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.child(productIdToUpdate).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     progressBar.setVisibility(View.GONE);
-                    databaseReference.updateChildren(map);
+                    databaseReference.child(productIdToUpdate).updateChildren(map);
                     Toast.makeText(EditProductActivity.this, "Product Updated!", Toast.LENGTH_SHORT).show();
                     checkUserRole(firebaseUser.getUid());
-                    //startActivity(new Intent(EditProductActivity.this, MainActivity.class));
-
                 }
 
                 @Override
@@ -399,13 +401,12 @@ public class EditProductActivity extends AppCompatActivity {
                     Toast.makeText(EditProductActivity.this, "Failed to update product info!", Toast.LENGTH_SHORT).show();
                 }
             });
-        }
-
-        else {
+        } else {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
     private void checkUserRole(final String uid) {

@@ -289,17 +289,14 @@ public class AddProductActivity extends AppCompatActivity {
                                         String expiryDate = etDate.getText().toString().trim();
                                         String productImg = downloadUrl.toString();
 
-                                        DatabaseReference newProductRef = mDatabaseRef.push();
-                                        String productKey = newProductRef.getKey();
-
                                         // Create a ProductRVModel object
                                         ProductRVModel productRVModel = new ProductRVModel(createdBy, productName, productDesc, productQty, expiryDate, productImg, productKey);
 
-                                        newProductRef.setValue(productRVModel)
+                                        mDatabaseRef.child(productKey).setValue(productRVModel)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        DatabaseReference productIDRef = newProductRef.child("productID");
+                                                        DatabaseReference productIDRef = mDatabaseRef.child(productKey).child("productID");
                                                         productIDRef.setValue(productKey)
                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
