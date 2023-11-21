@@ -52,7 +52,7 @@ public class EditProductActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseDatabase firebaseDatabase;
 
-    private DatabaseReference databaseReference, testingRef;
+    private DatabaseReference databaseReference;
     private DatabaseReference HistoryDBRef;
 
     private String productID;
@@ -64,9 +64,7 @@ public class EditProductActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
     private boolean usingQR;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +74,7 @@ public class EditProductActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
 
-        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         productImage = findViewById(R.id.idProductImage);
         productNameEdt = findViewById(R.id.idEdtProductName);
@@ -123,94 +121,19 @@ public class EditProductActivity extends AppCompatActivity {
             expiryDateEdt.setText(productRVModel.getExpiryDate());
             productID = productRVModel.getProductID();
 
-            databaseReference = firebaseDatabase.getReference("Products")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()+productID)
-                    .child(productID);
+            // Update the database reference path
+            databaseReference = firebaseDatabase.getReference("Products").child(productID);
+            mStorageRef = FirebaseStorage.getInstance().getReference("uploads").child(productID);
         }
         else {
             if (extras != null) {
                 qrText = extras.getString("productQR");
                 Log.d("test2323", qrText);
+                String decryptedProductID = decryptQRCode(qrText);
 
+                // Load the product information using the decrypted product ID
+                loadProductInformation(decryptedProductID);
             }
-            String qr1 = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            String qr2 = qrText;
-            System.out.println("OOOOO" + productNameEdt.getText());
-            if (qrText.length() < qr1.length()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
-                builder.setTitle("No record ");
-                builder.setMessage(qrText + "not found.");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                        Intent back = new Intent(EditProductActivity.this, MainActivity.class);
-                        startActivity(back);
-                        dialogInterface.dismiss();
-                    }
-                }).show();
-
-
-            } else {
-                String tempID = qr2.substring(qr1.length(), qr2.length());
-                System.out.println(tempID);
-                //new changes
-                testingRef = firebaseDatabase.getInstance().getReference("Products")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(qrText);
-
-                databaseReference = firebaseDatabase.getInstance().getReference("Products")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(qrText)
-                        .child(tempID);
-
-                String finalQrText = qrText.trim();
-                testingRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        System.out.println("KKKKK2");
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            for (DataSnapshot productid : ds.getChildren()) {
-                                System.out.println(ds + "\n KKKKK4" + productid);
-                                productRVModel = ds.getValue(ProductRVModel.class);
-                                System.out.println(productRVModel.getProductName());
-                                productNameEdt.setText(productRVModel.getProductName());
-                                productDescEdt.setText(productRVModel.getProductDesc());
-                                productQtyEdt.setText(productRVModel.getProductQty());
-                                Picasso.with(EditProductActivity.this).load(productRVModel.getProductImg()).into(productImage);
-                                expiryDateEdt.setText(productRVModel.getExpiryDate());
-                                productID = productRVModel.getProductID();
-
-                            }
-
-                        }
-
-                        if (productNameEdt.getText().length() < 1 ) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
-                            builder.setTitle("No record ");
-                            builder.setMessage(finalQrText + "\nnot found.");
-                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    Intent back = new Intent(EditProductActivity.this, MainActivity.class);
-                                    startActivity(back);
-                                    dialogInterface.dismiss();
-                                }
-                            }).show();
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-            }
-
         }
 
 
@@ -266,9 +189,6 @@ public class EditProductActivity extends AppCompatActivity {
                 if (userSnapshot.exists()) {
                     // Get the username from the "Users" node
                     String username = userSnapshot.child("userName").getValue(String.class);
-
-                    System.out.println("Username modify" +  username);
-
                     if (username != null) {
                         // Use the username in the action history
                         String actionHistory = "'" + productNameEdt.getText().toString().trim() +
@@ -383,7 +303,7 @@ public class EditProductActivity extends AppCompatActivity {
 
     private void updateProduct(){
         if(mImageUri != null){
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+            StorageReference fileReference = mStorageRef.child(productID
                     + "." + getFileExtension(mImageUri));
 
             mUploadTask = fileReference.putFile(mImageUri)
@@ -521,6 +441,113 @@ public class EditProductActivity extends AppCompatActivity {
                 Toast.makeText(EditProductActivity.this, "Failed to check user role.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private String decryptQRCode(String encryptedQRCode) {
+
+        String encryptedProductID = encryptedQRCode;
+
+        // Extract the original product ID (remove the 3 random characters)
+        int middleIndex = encryptedProductID.length() / 2;
+        StringBuilder decryptedProductID = new StringBuilder();
+        decryptedProductID.append(encryptedProductID.charAt(middleIndex - 1));
+        decryptedProductID.append(encryptedProductID.charAt(middleIndex));
+        decryptedProductID.append(encryptedProductID.charAt(middleIndex + 1));
+
+        return decryptedProductID.toString();
+    }
+    private void loadProductInformation(String productID) {
+        DatabaseReference productRef = firebaseDatabase.getInstance().getReference("Products")
+                .child(productID);
+
+        productRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Get the createdBy field from the database
+                    String createdByUserID = dataSnapshot.child("createdBy").getValue(String.class);
+
+                    // Check the user's role
+                    checkUserRole(createdByUserID, dataSnapshot);
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
+                    builder.setTitle("Scan QR Code");
+                    builder.setMessage("Item Not Found.");
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent back = new Intent(EditProductActivity.this, MainActivity.class);
+                            startActivity(back);
+                            dialogInterface.dismiss();
+                        }
+                    }).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle the error if needed
+            }
+        });
+    }
+
+    private void checkUserRole(String createdByUserID, DataSnapshot productSnapshot) {
+        DatabaseReference userRoleRef = firebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("role");
+
+        userRoleRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot roleSnapshot) {
+                String userRole = roleSnapshot.getValue(String.class);
+
+                // Check the user's role
+                if (userRole != null) {
+                    if (userRole.equals("admin")) {
+                        // Admin has permission, load the product information
+                        loadProductData(productSnapshot);
+                    } else {
+                        // Check if the logged-in user is the creator of the product
+                        if (createdByUserID != null && createdByUserID.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            // User has permission, load the product information
+                            loadProductData(productSnapshot);
+                        } else {
+                            // User doesn't have permission, show an alert or handle as needed
+                            showPermissionDeniedDialog();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle the error if needed
+            }
+        });
+    }
+
+    private void loadProductData(DataSnapshot dataSnapshot) {
+        ProductRVModel productRVModel = dataSnapshot.getValue(ProductRVModel.class);
+        if (productRVModel != null) {
+            productNameEdt.setText(productRVModel.getProductName());
+            productDescEdt.setText(productRVModel.getProductDesc());
+            productQtyEdt.setText(productRVModel.getProductQty());
+            Picasso.with(EditProductActivity.this).load(productRVModel.getProductImg()).into(productImage);
+            expiryDateEdt.setText(productRVModel.getExpiryDate());
+        }
+    }
+
+    private void showPermissionDeniedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(EditProductActivity.this);
+        builder.setTitle("Permission Denied");
+        builder.setMessage("You don't have permission to edit this product.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent back = new Intent(EditProductActivity.this, MainActivity.class);
+                startActivity(back);
+                dialogInterface.dismiss();
+            }
+        }).show();
     }
 
 }

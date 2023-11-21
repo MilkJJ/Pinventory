@@ -262,74 +262,92 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void uploadFile() {
         if (mImageUri != null) {
-            StorageReference fileReference = mStorageRef.child(productID
-                    + "." + getFileExtension(mImageUri));
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-            mUploadTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-                            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Uri downloadUrl = uri;
-                                    Toast.makeText(AddProductActivity.this, "Product Added Successfully!", Toast.LENGTH_LONG).show();
-                                    user = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                String createdBy = currentUser.getUid(); // Get the current user's ID
 
-                                    String productName = productNameEdt.getText().toString().trim();
-                                    String productDesc = productDescEdt.getText().toString().trim();
-                                    String productQty = productQtyEdt.getText().toString().trim();
-                                    String expiryDate = etDate.getText().toString().trim();
-                                    String productImg = downloadUrl.toString(); //productImgEdt.getText().toString().trim();
-                                    productID = productName;
+                String productKey = mDatabaseRef.push().getKey();
+                productID = productKey;
 
-                                    ProductRVModel productRVModel = new ProductRVModel(productName, productDesc, productQty, expiryDate, productImg, productID);
+                StorageReference fileReference = mStorageRef.child(productKey + "/" + productKey + "." + getFileExtension(mImageUri));
 
-                                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                mUploadTask = fileReference.putFile(mImageUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        Uri downloadUrl = uri;
+                                        Toast.makeText(AddProductActivity.this, "Product Added Successfully!", Toast.LENGTH_LONG).show();
 
-                                    mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            progressBar.setVisibility(View.GONE);
-                                            mDatabaseRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid() + productID)
-                                                    .child(productID)
-                                                    .setValue(productRVModel);
+                                        String productName = productNameEdt.getText().toString().trim();
+                                        String productDesc = productDescEdt.getText().toString().trim();
+                                        String productQty = productQtyEdt.getText().toString().trim();
+                                        String expiryDate = etDate.getText().toString().trim();
+                                        String productImg = downloadUrl.toString();
 
-                                            Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
-                                            checkUserRole(firebaseUser.getUid());
-                                            //startActivity(new Intent(AddProductActivity.this, MainActivity.class));
-                                        }
+                                        DatabaseReference newProductRef = mDatabaseRef.push();
+                                        String productKey = newProductRef.getKey();
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Toast.makeText(AddProductActivity.this, "Error:" + error.toString(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
-                            progressBar.setProgress((int) progress);
-                        }
-                    });
+                                        // Create a ProductRVModel object
+                                        ProductRVModel productRVModel = new ProductRVModel(createdBy, productName, productDesc, productQty, expiryDate, productImg, productKey);
+
+                                        newProductRef.setValue(productRVModel)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        DatabaseReference productIDRef = newProductRef.child("productID");
+                                                        productIDRef.setValue(productKey)
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Toast.makeText(AddProductActivity.this, "Product Added!", Toast.LENGTH_SHORT).show();
+                                                                        checkUserRole(currentUser.getUid());
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(AddProductActivity.this, "Failed to update productID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                    }
+                                                                });
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(AddProductActivity.this, "Failed to add product: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                    }
+                                });
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(AddProductActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                                progressBar.setProgress((int) progress);
+                            }
+                        });
+            } else {
+                Toast.makeText(AddProductActivity.this, "User not logged in.", Toast.LENGTH_SHORT).show();
+            }
         } else {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(this, "No image file selected!", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     ;
 

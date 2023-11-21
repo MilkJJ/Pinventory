@@ -86,16 +86,24 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     progressBar.setVisibility(View.VISIBLE);
-                    QRList = new ArrayList<>();
+                    productRVModelArrayList.clear(); // Clear the list before adding new data
+
+                    // Get the current user's ID
+                    String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                     for (DataSnapshot qrSnapshot : dataSnapshot.getChildren()) {
-                        for(DataSnapshot productid : qrSnapshot.getChildren()) {
-                            productRVModelArrayList.add(productid.getValue(ProductRVModel.class));
+                        for (DataSnapshot productSnapshot : qrSnapshot.getChildren()) {
+                            ProductRVModel product = productSnapshot.getValue(ProductRVModel.class);
+
+                            // Check if the product was created by the current user
+                            if (product != null && product.getCreatedBy().equals(currentUserID)) {
+                                productRVModelArrayList.add(product);
+                            }
                         }
                     }
-                    productRVAdapter = new ProductRVAdapter(productRVModelArrayList, MainActivity.this, MainActivity.this);
-                    productRV.setAdapter(productRVAdapter);
-                    if(!productRVModelArrayList.isEmpty()){
+
+                    productRVAdapter.notifyDataSetChanged();
+                    if (!productRVModelArrayList.isEmpty()) {
                         progressBar.setVisibility(View.GONE);
                     }
                 }
@@ -103,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle the error if needed
             }
         });
 
@@ -138,42 +146,6 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
             productRVAdapter.setFilteredList(filteredList);
         }
     }
-
-//    private void getAllProducts() {
-//        productRVModelArrayList.clear();
-//        databaseReference1.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                progressBar.setVisibility(View.GONE);
-//                productRVModelArrayList.add(snapshot.getValue(ProductRVModel.class));
-//                productRVAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                progressBar.setVisibility(View.GONE);
-//                productRVAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//                progressBar.setVisibility(View.GONE);
-//                productRVAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                progressBar.setVisibility(View.GONE);
-//                productRVAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
-
     @Override
     public void onProductClick(int position) {
         displayBottomSheet(productRVModelArrayList.get(position));

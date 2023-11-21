@@ -10,6 +10,7 @@ public class ProductRVModel implements Parcelable {
     private String expiryDate;
     private String productImg;
     private String productID;
+    private String createdBy;
 
     //private String productExpiry Date/QR Code
 
@@ -17,13 +18,14 @@ public class ProductRVModel implements Parcelable {
 
     }
 
-    public ProductRVModel(String productName, String productDesc, String productQty, String expiryDate, String productImg, String productID) {
+    public ProductRVModel(String createdBy,String productName, String productDesc, String productQty, String expiryDate, String productImg, String productID) {
         this.productName = productName;
         this.productDesc = productDesc;
         this.productQty = productQty;
         this.expiryDate = expiryDate;
         this.productImg = productImg;
         this.productID = productID;
+        this.createdBy = createdBy;
 
     }
 
@@ -34,6 +36,7 @@ public class ProductRVModel implements Parcelable {
         expiryDate = in.readString();
         productImg = in.readString();
         productID = in.readString();
+        createdBy = in.readString();
     }
 
     public static final Creator<ProductRVModel> CREATOR = new Creator<ProductRVModel>() {
@@ -95,6 +98,13 @@ public class ProductRVModel implements Parcelable {
     public void setProductID(String productID) {
         this.productID = productID;
     }
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 
     @Override
     public int describeContents() {
@@ -109,5 +119,6 @@ public class ProductRVModel implements Parcelable {
         dest.writeString(expiryDate);
         dest.writeString(productImg);
         dest.writeString(productID);
+        dest.writeString(createdBy);
     }
 }

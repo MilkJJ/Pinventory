@@ -104,15 +104,11 @@ public class AdminItemListFragment extends Fragment implements ProductRVAdapter.
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     progressBar.setVisibility(View.VISIBLE);
-                    QRList = new ArrayList<>();
+                    productRVModelArrayList.clear(); // Clear the list before adding new data
 
-                    for (DataSnapshot child1Snapshot : dataSnapshot.getChildren()) {
-                        for (DataSnapshot child2Snapshot : child1Snapshot.getChildren()) {
-                            for (DataSnapshot productSnapshot : child2Snapshot.getChildren()) {
-                                ProductRVModel product = productSnapshot.getValue(ProductRVModel.class);
-                                productRVModelArrayList.add(product);
-                            }
-                        }
+                    for (DataSnapshot productSnapshot : dataSnapshot.getChildren()) {
+                        ProductRVModel product = productSnapshot.getValue(ProductRVModel.class);
+                        productRVModelArrayList.add(product);
                     }
 
                     productRVAdapter.notifyDataSetChanged();
@@ -124,7 +120,7 @@ public class AdminItemListFragment extends Fragment implements ProductRVAdapter.
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                // Handle the error if needed
             }
         });
 

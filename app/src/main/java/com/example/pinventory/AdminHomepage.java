@@ -15,7 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminHomepage extends AppCompatActivity {
-    private Toolbar toolbar;
     private String adminId;
     private FirebaseAuth mAuth;
     private BottomNavigationView bottomNavigationView;
