@@ -64,14 +64,14 @@ public class ViewQR extends AppCompatActivity {
     }
 
     private String encryptProductID(String productID) {
-        // Add 3 random characters to the middle of the product ID
+        // Insert 3 random characters in the middle of the product ID
         Random random = new Random();
         int middleIndex = productID.length() / 2;
-        char[] productIDChars = productID.toCharArray();
+        StringBuilder productIDBuilder = new StringBuilder(productID);
         for (int i = 0; i < 3; i++) {
             char randomChar = (char) (random.nextInt(26) + 'a'); // Random lowercase letter
-            productIDChars[middleIndex + i] = randomChar;
+            productIDBuilder.insert(middleIndex, randomChar);
         }
-        return new String(productIDChars);
+        return productIDBuilder.toString();
     }
 }
