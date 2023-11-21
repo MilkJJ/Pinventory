@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,6 +25,7 @@ public class AdminHomepage extends AppCompatActivity {
         setContentView(R.layout.activity_admin_homepage);
         AdminItemListFragment adminItemListFragment = new AdminItemListFragment();
         loadFragment(adminItemListFragment);
+        mAuth = FirebaseAuth.getInstance();
 // Initialize the bottomNavigationView and set up its listener
         bottomNavigationView = findViewById(R.id.bottomNavMain_admin);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -76,5 +78,37 @@ public class AdminHomepage extends AppCompatActivity {
         else {
             super.onBackPressed(); // Allow normal back navigation for other fragments
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.tb_logout:
+                logout();
+                return true;
+            case R.id.mmProfile:
+                Intent k = new Intent(AdminHomepage.this, ProfileActivity.class);
+                startActivity(k);
+                this.finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void logout() {
+        mAuth.signOut();
+        // After signing out, you can redirect the user to the login screen or perform any other actions you need.
+        // For example, you can start a LoginActivity:
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        // Make sure to finish the current activity to prevent the user from navigating back to it.
+        finish();
     }
 }
