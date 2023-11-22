@@ -5,20 +5,20 @@ import android.os.Parcelable;
 
 public class HistoryRVModel implements Parcelable {
     private String actionHistory;
-    private String date;
-    private String actionType;
-
+    private String timestamp;
 
     public HistoryRVModel() {
-        //Empty Constructor
+        // Empty Constructor
     }
 
-    public HistoryRVModel(String actionHistory) {
+    public HistoryRVModel(String actionHistory, String timestamp) {
         this.actionHistory = actionHistory;
+        this.timestamp = timestamp;
     }
 
     protected HistoryRVModel(Parcel in) {
         actionHistory = in.readString();
+        timestamp = in.readString();
     }
 
     public static final Creator<HistoryRVModel> CREATOR = new Creator<HistoryRVModel>() {
@@ -33,15 +33,20 @@ public class HistoryRVModel implements Parcelable {
         }
     };
 
-    public HistoryRVModel(String itemId, String actionHistory) {
-    }
-
     public String getActionHistory() {
         return actionHistory;
     }
 
     public void setActionHistory(String actionHistory) {
         this.actionHistory = actionHistory;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -52,5 +57,6 @@ public class HistoryRVModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(actionHistory);
+        dest.writeString(timestamp);
     }
 }

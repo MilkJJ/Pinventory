@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.TreeMap;
 
 public class AdminStatisticFragment extends Fragment implements HistoryRVAdapter.HistoryClickInterface {
@@ -66,29 +67,32 @@ public class AdminStatisticFragment extends Fragment implements HistoryRVAdapter
             public void onChildAdded(@NonNull DataSnapshot userSnapshot, @Nullable String previousChildName) {
                 progressBar.setVisibility(View.GONE);
 
-                //TreeMap<String, HistoryRVModel> itemMap = new TreeMap<>(Collections.reverseOrder());
-
-                // Iterate through each user's branch under "History"
                 for (DataSnapshot itemSnapshot : userSnapshot.getChildren()) {
-                    // Assuming each item has a unique identifier
                     String itemId = itemSnapshot.getKey();
+                    String actionHistory = itemSnapshot.child("actionHistory").getValue(String.class);
+                    String timestamp = itemSnapshot.child("timestamp").getValue(String.class);
 
-                    // Assuming each item has an "actionHistory" field
-                    String actionHistory1 = itemSnapshot.child("actionHistory").getValue(String.class);
+                    if (itemId != null && actionHistory != null && timestamp != null) {
+                        HistoryRVModel actionHistoryModel = new HistoryRVModel(actionHistory, timestamp);
 
-                   if (itemId != null && actionHistory1 != null) {
-                       // Create a HistoryRVModel or use the data as needed
-                       //HistoryRVModel historyModel = new HistoryRVModel(itemId, actionHistory);
+                        // Add the new history item at the beginning of the list
+                        historyRVModelArrayList.add(0, actionHistoryModel);
 
-                       HistoryRVModel actionHistory = itemSnapshot.getValue(HistoryRVModel.class);
+                        // Sort the list based on the timestamp (currentTimeMillis())
+                        Collections.sort(historyRVModelArrayList, new Comparator<HistoryRVModel>() {
+                            @Override
+                            public int compare(HistoryRVModel o1, HistoryRVModel o2) {
+                                // Reverse order for descending sorting
+                                return Long.compare(Long.parseLong(o2.getTimestamp()), Long.parseLong(o1.getTimestamp()));
+                            }
+                        });
 
-                       historyRVModelArrayList.add(actionHistory);
-
-                       historyRVAdapter.notifyDataSetChanged();
-                   }
-
+                        historyRVAdapter.notifyDataSetChanged();
+                    }
                 }
             }
+
+
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {

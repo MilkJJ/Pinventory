@@ -208,7 +208,7 @@ public class AddProductActivity extends AppCompatActivity {
                                 "' has been added on " + s.toString() + " by " + username;
 
                         // Create a HistoryRVModel object
-                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
+                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory, System.currentTimeMillis() + "");
 
                         // Reference to the "History" node
                         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference("History");

@@ -192,7 +192,7 @@ public class EditProductActivity extends AppCompatActivity {
                                 "' has been modified on " + s.toString() + " by " + username;
 
                         // Create a HistoryRVModel object
-                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
+                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory, System.currentTimeMillis() + "");
 
                         // Reference to the "History" node
                         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference("History");
@@ -245,7 +245,7 @@ public class EditProductActivity extends AppCompatActivity {
                                 "' has been removed on " + s.toString() + " by " + username;
 
                         // Create a HistoryRVModel object
-                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory);
+                        HistoryRVModel historyRVModel = new HistoryRVModel(actionHistory, System.currentTimeMillis() + "");
 
                         // Reference to the "History" node
                         DatabaseReference historyRef = FirebaseDatabase.getInstance().getReference("History");
