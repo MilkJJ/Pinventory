@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements ProductRVAdapter.
                         if (product != null && product.getCreatedBy().equals(currentUserID)) {
                             productRVModelArrayList.add(product);
                         }
+                        progressBar.setVisibility(View.GONE);
                     }
 
                     productRVAdapter.notifyDataSetChanged();

@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapter.HistoryClickInterface {
@@ -56,14 +58,30 @@ public class HistoryActivity extends AppCompatActivity implements HistoryRVAdapt
         getHistories();
     }
 
+
     private void getHistories() {
         historyRVModelArrayList.clear();
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 progressBar.setVisibility(View.GONE);
-                historyRVModelArrayList.add(snapshot.getValue(HistoryRVModel.class));
-                historyRVAdapter.notifyDataSetChanged();
+
+                HistoryRVModel historyModel = snapshot.getValue(HistoryRVModel.class);
+
+                if (historyModel != null) {
+                    historyRVModelArrayList.add(historyModel);
+
+                    // Sort the list based on the timestamp (currentTimeMillis())
+                    Collections.sort(historyRVModelArrayList, new Comparator<HistoryRVModel>() {
+                        @Override
+                        public int compare(HistoryRVModel o1, HistoryRVModel o2) {
+                            // Reverse order for descending sorting
+                            return Long.compare(Long.parseLong(o2.getTimestamp()), Long.parseLong(o1.getTimestamp()));
+                        }
+                    });
+
+                    historyRVAdapter.notifyDataSetChanged();
+                }
             }
 
             @Override
