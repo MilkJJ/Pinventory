@@ -7,6 +7,9 @@
         android:id="@+id/Profile"
         android:title="Profile" />
     <item
+        android:id="@+id/ScanQR"
+        android:title="Scan QR Code" />
+    <item
         android:id="@+id/tb_logout"
         android:icon="@drawable/baseline_logout_24"
         app:showAsAction="ifRoom"

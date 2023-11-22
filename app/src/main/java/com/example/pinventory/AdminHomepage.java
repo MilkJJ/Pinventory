@@ -1,5 +1,6 @@
 package com.example.pinventory;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 public class AdminHomepage extends AppCompatActivity {
     private String adminId;
@@ -90,7 +93,10 @@ public class AdminHomepage extends AppCompatActivity {
             case R.id.tb_logout:
                 logout();
                 return true;
-            case R.id.mmProfile:
+            case R.id.ScanQR:
+                scanCode();
+                return true;
+            case R.id.Profile:
                 Intent k = new Intent(AdminHomepage.this, ProfileActivity.class);
                 startActivity(k);
                 this.finish();
@@ -100,6 +106,24 @@ public class AdminHomepage extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume up to flash on");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result ->
+    {
+        if(result.getContents()!=null){
+            Intent i = new Intent(AdminHomepage.this, EditProductActivity.class);
+            i.putExtra("productQR", result.getContents());
+            startActivity(i);
+
+        }
+
+    });
 
     private void logout() {
         mAuth.signOut();
