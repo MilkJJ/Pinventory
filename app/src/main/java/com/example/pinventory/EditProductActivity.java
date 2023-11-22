@@ -218,7 +218,19 @@ public class EditProductActivity extends AppCompatActivity {
         });
     }
     private void deleteProduct(){
-        databaseReference.removeValue();
+        String productIdToUpdate;
+        productRVModel = getIntent().getParcelableExtra("product");
+        if (productRVModel != null) {
+            // If productRVModel is available, use its productID
+            productIdToUpdate = productRVModel.getProductID();
+
+        } else {
+            // If productRVModel is null, get the productID from Intent extras and decrypt
+            String encryptedProductId = getIntent().getStringExtra("productQR");
+            productIdToUpdate = decryptQRCode(encryptedProductId);
+        }
+        databaseReference.child(productIdToUpdate).removeValue();
+
         Toast.makeText(this, "Product Removed!", Toast.LENGTH_SHORT).show();
 
         Date d = new Date();

@@ -28,6 +28,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Button logout, btnHomepage;
     private TextView TVChangePass;
+    private DatabaseReference mDatabase;
+    private DatabaseReference userDatabase;
 
 
     @Override
@@ -49,9 +51,12 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         btnHomepage.setOnClickListener(new View.OnClickListener() {
+
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                checkUserRole(firebaseUser.getUid());
             }
         });
 
@@ -117,5 +122,48 @@ public class ProfileActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void checkUserRole(final String uid) {
+        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        mDatabase.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                if (user != null) {
+                    if (user.getRole().equals("admin")) {
+                        // User is an admin, go to AdminHomepage
+                        Intent intent = new Intent(ProfileActivity.this, AdminHomepage.class);
+                        intent.putExtra("adminId", uid); // Pass the uid as an extra
+                        UserData.getInstance().setUserID(uid);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        //finish(); // Close the login activity
+                    } else {
+                        // User is a regular user, check the status
+                        if (user.isStatus()) {
+                            // User status is true (enabled), go to MainActivity
+                            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                            intent.putExtra("userID", uid);
+                            UserData.getInstance().setUserID(uid);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            //finish(); // Close the login activity
+                        } else {
+                            // User status is false (disabled), show a message
+                            Toast.makeText(ProfileActivity.this, "Your account is disabled. Please contact the administrator.", Toast.LENGTH_SHORT).show();
+                            FirebaseAuth.getInstance().signOut(); // Sign out the user
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error if needed
+                Toast.makeText(ProfileActivity.this, "Failed to check user role.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
